@@ -20,7 +20,7 @@
     }
     
     .container {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
@@ -31,11 +31,12 @@
     }
     
     .book {
-      width: 1400px;
-      height: 900px;
+      width: 1600px;
+      height: 1000px;
       position: relative;
       perspective: 2000px;
-      transform: rotateX(5deg) rotateY(-5deg);
+      transform: perspective(2000px) rotateX(5deg) rotateY(-5deg);
+      margin: 0 auto;
     }
     
     .page {
@@ -63,8 +64,8 @@
     }
     
     .cover-side {
-      width: 700px;
-      height: 900px;
+      width: 800px;
+      height: 1000px;
       background: #ffffff;
       background-size: cover;
       background-position: center;
@@ -86,8 +87,8 @@
     }
     
     .left-side, .right-side {
-      width: 700px;
-      height: 900px;
+      width: 800px;
+      height: 1000px;
       background: #ffffff;
       background-size: cover;
       background-position: center;
@@ -131,22 +132,25 @@
       pointer-events: none;
     }
     
-    /* ARKA KAPAK - ortada tek */
+    /* ARKA KAPAK - tam ortada */
     .page.back-cover {
+      display: flex;
+      align-items: center;
       justify-content: center;
     }
     
     .back-cover-side {
-      width: 700px;
-      height: 900px;
+      width: 800px;
+      height: 1000px;
       background: #ffffff;
       background-size: cover;
       background-position: center;
       border-radius: 15px;
       cursor: pointer;
       transform: perspective(1000px) rotateY(0deg);
-      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+      box-shadow: 0 0 50px rgba(0,0,0,0.5);
       border: 4px solid #e2e8f0;
+      position: relative;
     }
     
     /* Loading content */
@@ -209,6 +213,11 @@
     }
     
     /* Responsive */
+    @media (max-width: 1700px) {
+      .book { width: 1400px; height: 850px; }
+      .cover-side, .left-side, .right-side, .back-cover-side { width: 700px; height: 850px; }
+    }
+    
     @media (max-width: 1500px) {
       .book { width: 1200px; height: 750px; }
       .cover-side, .left-side, .right-side, .back-cover-side { width: 600px; height: 750px; }
