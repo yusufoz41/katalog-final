@@ -11,46 +11,32 @@
       box-sizing: border-box;
     }
     
-    body {
-      background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
-      font-family: 'Arial', sans-serif;
+    html, body {
+      margin: 0;
+      padding: 0;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
       position: fixed;
-      top: 0;
-      left: 0;
-      margin: 0;
-      padding: 0;
+      background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+      font-family: 'Arial', sans-serif;
     }
     
     .book-container {
-      perspective: 2500px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-style: preserve-3d;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      perspective: 2000px;
     }
     
     .book {
-      position: absolute;
-      width: min(1400px, 90vw);
-      height: min(900px, 80vh);
+      width: 1200px;
+      height: 800px;
+      position: relative;
+      transform: perspective(2000px) rotateX(5deg) rotateY(-5deg);
       transform-style: preserve-3d;
       border-radius: 15px;
-      overflow: visible;
-      background: transparent;
-      transform: perspective(2500px) rotateX(5deg) rotateY(-5deg);
-      top: 50%;
-      left: 50%;
-      transform-origin: center center;
-      margin-left: min(-700px, -45vw);
-      margin-top: min(-450px, -40vh);
     }
     
     /* Kitap gölgesi */
@@ -70,14 +56,13 @@
     /* Sayfa Spread Sistemi */
     .page-spread {
       position: absolute;
-      width: 100%;
-      height: 100%;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       display: flex;
       background: transparent;
       border-radius: 15px;
-      overflow: visible;
       transform-style: preserve-3d;
     }
     
@@ -301,9 +286,9 @@
       }
     }
     
-    /* Yükleme animasyonu */
+    /* Yükleme - viewport ortalı */
     .loading {
-      position: fixed;
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -362,22 +347,25 @@
       animation: none;
     }
     
-    /* Responsive */
-    @media (max-width: 1500px) {
+    /* Responsive - basit */
+    @media (max-width: 1300px) {
       .book {
-        width: min(1100px, 90vw);
-        height: min(750px, 80vh);
-        margin-left: min(-550px, -45vw);
-        margin-top: min(-375px, -40vh);
+        width: 1000px;
+        height: 650px;
       }
     }
     
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
       .book {
-        width: min(900px, 90vw);
-        height: min(600px, 80vh);
-        margin-left: min(-450px, -45vw);
-        margin-top: min(-300px, -40vh);
+        width: 800px;
+        height: 550px;
+      }
+    }
+    
+    @media (max-width: 900px) {
+      .book {
+        width: 600px;
+        height: 400px;
       }
     }
   </style>
