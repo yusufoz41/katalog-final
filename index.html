@@ -12,281 +12,175 @@
     }
     
     html, body {
-      margin: 0;
-      padding: 0;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
-      position: fixed;
       background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
       font-family: 'Arial', sans-serif;
     }
     
-    .book-container {
+    .container {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      perspective: 2000px;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .book {
       width: 1200px;
       height: 800px;
       position: relative;
-      transform: perspective(2000px) rotateX(5deg) rotateY(-5deg);
-      transform-style: preserve-3d;
-      border-radius: 15px;
+      perspective: 2000px;
+      transform: rotateX(5deg) rotateY(-5deg);
     }
     
-    /* Kitap gölgesi */
-    .book::before {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: -20%;
-      width: 140%;
-      height: 60px;
-      background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
-      border-radius: 50%;
-      z-index: -1;
-      transform: rotateX(90deg) translateZ(-30px);
-    }
-    
-    /* Sayfa Spread Sistemi */
-    .page-spread {
+    .page {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       display: flex;
-      background: transparent;
       border-radius: 15px;
-      transform-style: preserve-3d;
-    }
-    
-    .page-spread.hidden {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       opacity: 0;
-      pointer-events: none;
-      transform: translateZ(-50px) scale(0.9);
+      transform: scale(0.9);
       transition: all 0.8s ease;
     }
     
-    .page-spread.visible {
+    .page.active {
       opacity: 1;
-      pointer-events: auto;
-      transform: translateZ(0) scale(1);
-      transition: all 0.8s ease;
+      transform: scale(1);
     }
     
-    /* KAPAK - Sağ tarafta */
-    .cover-spread {
+    /* KAPAK - sağ tarafta tek */
+    .page.cover {
       justify-content: flex-end;
     }
     
-    .cover-page {
-      width: 50%;
-      height: 100%;
+    .cover-side {
+      width: 600px;
+      height: 800px;
       background: #ffffff;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      position: relative;
-      cursor: pointer;
-      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       border-radius: 15px;
-      transform-origin: left center;
-      box-shadow: 
-        -10px 0 30px rgba(0,0,0,0.4),
-        -20px 0 50px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transform: perspective(1000px) rotateY(-10deg);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.3);
       border-left: 8px solid #e2e8f0;
-    }
-    
-    .cover-page:hover {
-      transform: perspective(1500px) rotateY(-25deg) translateX(-30px);
-    }
-    
-    /* Kapak çevirme efekti */
-    .cover-page::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 60px;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        rgba(255,255,255,0.8) 0%, 
-        rgba(255,255,255,0.4) 50%, 
-        transparent 100%);
-      opacity: 0;
-      transition: all 0.5s ease;
-      border-radius: 15px 0 0 15px;
-    }
-    
-    .cover-page:hover::after {
-      opacity: 1;
-      transform: translateX(10px);
-    }
-    
-    /* NORMAL SAYFALAR */
-    .normal-spread {
       position: relative;
-      background: transparent;
     }
     
-    .page-left, .page-right {
-      width: 50%;
-      height: 100%;
-      position: relative;
+    .cover-side:hover {
+      transform: perspective(1000px) rotateY(-20deg) translateX(-20px);
+    }
+    
+    /* NORMAL SAYFALAR - çift */
+    .page.normal {
+      justify-content: space-between;
+    }
+    
+    .left-side, .right-side {
+      width: 600px;
+      height: 800px;
       background: #ffffff;
-      overflow: hidden;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
       border-radius: 15px;
       cursor: pointer;
+      position: relative;
     }
     
-    /* Sol sayfa */
-    .page-left {
-      transform-origin: right center;
-      transform: perspective(1500px) rotateY(-8deg) translateX(-20px);
+    .left-side {
+      transform: perspective(1000px) rotateY(-8deg) translateX(-20px);
       box-shadow: 5px 0 25px rgba(0,0,0,0.3);
       border-right: 3px solid #f1f5f9;
     }
     
-    .page-left:hover {
-      transform: perspective(1500px) rotateY(-15deg) translateX(-40px);
-      transition: transform 0.5s ease;
+    .left-side:hover {
+      transform: perspective(1000px) rotateY(-15deg) translateX(-40px);
     }
     
-    /* Sağ sayfa */
-    .page-right {
-      transform-origin: left center;
-      transform: perspective(1500px) rotateY(8deg) translateX(20px);
+    .right-side {
+      transform: perspective(1000px) rotateY(8deg) translateX(20px);
       box-shadow: -5px 0 25px rgba(0,0,0,0.3);
       border-left: 3px solid #f1f5f9;
     }
     
-    .page-right:hover {
-      transform: perspective(1500px) rotateY(15deg) translateX(40px);
-      transition: transform 0.5s ease;
+    .right-side:hover {
+      transform: perspective(1000px) rotateY(15deg) translateX(40px);
     }
     
     /* Cilt çizgisi */
-    .normal-spread::after {
+    .normal::after {
       content: '';
       position: absolute;
       left: 50%;
       top: 5%;
       width: 8px;
       height: 90%;
-      background: linear-gradient(to bottom, 
-        #64748b 0%, 
-        #334155 20%, 
-        #1e293b 50%, 
-        #334155 80%, 
-        #64748b 100%);
+      background: linear-gradient(to bottom, #64748b, #334155, #1e293b, #334155, #64748b);
       transform: translateX(-50%);
-      z-index: 10;
-      box-shadow: 
-        -4px 0 12px rgba(0,0,0,0.4),
-        4px 0 12px rgba(0,0,0,0.4);
       border-radius: 4px;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.4), 4px 0 12px rgba(0,0,0,0.4);
       pointer-events: none;
     }
     
-    /* ARKA KAPAK */
-    .back-cover-spread {
+    /* ARKA KAPAK - sol tarafta tek */
+    .page.back-cover {
       justify-content: flex-start;
     }
     
-    .back-cover-page {
-      width: 50%;
-      height: 100%;
+    .back-cover-side {
+      width: 600px;
+      height: 800px;
       background: #ffffff;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      position: relative;
       border-radius: 15px;
-      transform-origin: right center;
-      box-shadow: 
-        10px 0 30px rgba(0,0,0,0.4),
-        20px 0 50px rgba(0,0,0,0.2);
+      transform: perspective(1000px) rotateY(10deg);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.3);
       border-right: 8px solid #e2e8f0;
     }
     
-    /* Loading placeholder */
-    .loading-content {
+    /* Loading content */
+    .content {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100%;
       flex-direction: column;
       color: #475569;
-      background: linear-gradient(135deg, 
-        #f8fafc 0%, 
-        #f1f5f9 50%, 
-        #e2e8f0 100%);
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0);
       text-align: center;
-      position: relative;
       border-radius: 15px;
     }
     
-    .loading-content .icon {
-      font-size: 6em;
-      margin-bottom: 30px;
+    .content .icon {
+      font-size: 5em;
+      margin-bottom: 25px;
       opacity: 0.7;
-      animation: float 3s ease-in-out infinite;
     }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-    
-    .loading-content .title {
-      font-size: 2.5em;
+    .content .title {
+      font-size: 2em;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       color: #1e293b;
-      letter-spacing: 1px;
     }
     
-    .loading-content .subtitle {
-      font-size: 1.3em;
+    .content .subtitle {
+      font-size: 1.2em;
       opacity: 0.8;
-      line-height: 1.6;
-      max-width: 80%;
+      line-height: 1.5;
     }
     
-    /* Sayfa çevirme animasyonu */
-    .page-turning {
-      animation: pageTurn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    @keyframes pageTurn {
-      0% {
-        transform: translateZ(0) scale(1);
-      }
-      25% {
-        transform: translateZ(50px) scale(1.05) rotateY(10deg);
-      }
-      50% {
-        transform: translateZ(100px) scale(1.1) rotateY(0deg);
-        opacity: 0.8;
-      }
-      75% {
-        transform: translateZ(50px) scale(1.05) rotateY(-10deg);
-      }
-      100% {
-        transform: translateZ(0) scale(1);
-      }
-    }
-    
-    /* Yükleme - viewport ortalı */
+    /* Loading ekranı */
     .loading {
       position: absolute;
       top: 50%;
@@ -295,18 +189,17 @@
       color: white;
       text-align: center;
       font-size: 24px;
-      font-weight: 300;
       z-index: 1000;
     }
     
     .spinner {
-      width: 70px;
-      height: 70px;
-      border: 6px solid rgba(255,255,255,0.2);
-      border-top: 6px solid white;
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(255,255,255,0.2);
+      border-top: 5px solid white;
       border-radius: 50%;
-      animation: spin 1.5s linear infinite;
-      margin: 0 auto 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
     }
     
     @keyframes spin {
@@ -314,59 +207,20 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Sayfa çevirme ipucu */
-    .page-turn-hint {
-      position: absolute;
-      top: 50%;
-      left: 30px;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-right: 25px solid rgba(255,255,255,0.9);
-      border-top: 20px solid transparent;
-      border-bottom: 20px solid transparent;
-      opacity: 0;
-      transition: all 0.4s ease;
-      animation: pulse 2s infinite;
-      pointer-events: none;
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        transform: translateY(-50%) scale(1);
-        opacity: 0;
-      }
-      50% {
-        transform: translateY(-50%) scale(1.1);
-        opacity: 0.8;
-      }
-    }
-    
-    .cover-page:hover .page-turn-hint {
-      opacity: 1;
-      animation: none;
-    }
-    
-    /* Responsive - basit */
+    /* Responsive */
     @media (max-width: 1300px) {
-      .book {
-        width: 1000px;
-        height: 650px;
-      }
+      .book { width: 1000px; height: 650px; }
+      .cover-side, .left-side, .right-side, .back-cover-side { width: 500px; height: 650px; }
     }
     
     @media (max-width: 1100px) {
-      .book {
-        width: 800px;
-        height: 550px;
-      }
+      .book { width: 800px; height: 550px; }
+      .cover-side, .left-side, .right-side, .back-cover-side { width: 400px; height: 550px; }
     }
     
     @media (max-width: 900px) {
-      .book {
-        width: 600px;
-        height: 400px;
-      }
+      .book { width: 600px; height: 400px; }
+      .cover-side, .left-side, .right-side, .back-cover-side { width: 300px; height: 400px; }
     }
   </style>
 </head>
@@ -376,125 +230,105 @@
     <div>OSSO Katalog yükleniyor...</div>
   </div>
   
-  <div class="book-container" id="book-container" style="display: none;">
+  <div class="container" id="container" style="display: none;">
     <div class="book" id="book">
-      <!-- Sayfalar dinamik olarak yüklenecek -->
+      <!-- Sayfalar buraya yüklenecek -->
     </div>
   </div>
 
   <script>
-    class OSSORealFlipbook {
+    class SimpleFlipbook {
       constructor() {
-        this.currentSpread = 0;
-        this.spreads = [];
-        this.totalSpreads = 14;
+        this.currentPage = 0;
+        this.pages = [];
+        this.totalPages = 14;
         this.init();
       }
       
-      async init() {
-        try {
-          this.createAllSpreads();
-          this.setupControls();
-          
-          setTimeout(() => {
-            this.hideLoading();
-            this.showSpread(0);
-            console.log('OSSO Flipbook hazır! 📖');
-          }, 1000);
-          
-        } catch (error) {
-          console.error('Flipbook hatası:', error);
-          this.showError();
-        }
+      init() {
+        this.createPages();
+        this.setupEvents();
+        
+        setTimeout(() => {
+          this.hideLoading();
+          this.showPage(0);
+        }, 1000);
       }
       
-      createAllSpreads() {
+      createPages() {
         const book = document.getElementById('book');
         
-        // 1. KAPAK
-        const coverSpread = this.createCoverSpread();
-        book.appendChild(coverSpread);
-        this.spreads.push(coverSpread);
+        // KAPAK
+        const cover = this.createCover();
+        book.appendChild(cover);
+        this.pages.push(cover);
         
-        // 2. NORMAL SAYFALAR
+        // NORMAL SAYFALAR
         for (let i = 2; i <= 26; i += 2) {
-          const normalSpread = this.createNormalSpread(i, i + 1);
-          book.appendChild(normalSpread);
-          this.spreads.push(normalSpread);
+          const page = this.createNormalPage(i, i + 1);
+          book.appendChild(page);
+          this.pages.push(page);
         }
         
-        // 3. ARKA KAPAK
-        const backCoverSpread = this.createBackCoverSpread();
-        book.appendChild(backCoverSpread);
-        this.spreads.push(backCoverSpread);
+        // ARKA KAPAK
+        const backCover = this.createBackCover();
+        book.appendChild(backCover);
+        this.pages.push(backCover);
       }
       
-      createCoverSpread() {
-        const spread = document.createElement('div');
-        spread.className = 'page-spread cover-spread hidden';
-        
-        spread.innerHTML = `
-          <div class="cover-page">
-            <div class="loading-content">
+      createCover() {
+        const page = document.createElement('div');
+        page.className = 'page cover';
+        page.innerHTML = `
+          <div class="cover-side">
+            <div class="content">
               <div class="icon">📚</div>
               <div class="title">OSSO</div>
-              <div class="subtitle">
-                Spor Tesisleri & İnşaat<br>
-                Katalog<br><br>
-                Açmak için tıklayın
-              </div>
+              <div class="subtitle">Spor Tesisleri & İnşaat<br>Katalog</div>
             </div>
-            <div class="page-turn-hint"></div>
           </div>
         `;
         
-        // Kapak tıklama
-        spread.querySelector('.cover-page').onclick = () => this.nextSpread();
-        
-        this.loadPageImage(spread.querySelector('.cover-page'), 1);
-        return spread;
+        page.querySelector('.cover-side').onclick = () => this.nextPage();
+        this.loadImage(page.querySelector('.cover-side'), 1);
+        return page;
       }
       
-      createNormalSpread(leftPage, rightPage) {
-        const spread = document.createElement('div');
-        spread.className = 'page-spread normal-spread hidden';
-        
-        spread.innerHTML = `
-          <div class="page-left">
-            <div class="loading-content">
+      createNormalPage(leftNum, rightNum) {
+        const page = document.createElement('div');
+        page.className = 'page normal';
+        page.innerHTML = `
+          <div class="left-side">
+            <div class="content">
               <div class="icon">📄</div>
-              <div class="title">Sayfa ${leftPage}</div>
+              <div class="title">Sayfa ${leftNum}</div>
               <div class="subtitle">Yükleniyor...</div>
             </div>
           </div>
-          <div class="page-right">
-            <div class="loading-content">
+          <div class="right-side">
+            <div class="content">
               <div class="icon">📄</div>
-              <div class="title">Sayfa ${rightPage}</div>
+              <div class="title">Sayfa ${rightNum}</div>
               <div class="subtitle">Yükleniyor...</div>
             </div>
           </div>
         `;
         
-        // Sol sayfa tıklama - önceki sayfa
-        spread.querySelector('.page-left').onclick = () => this.prevSpread();
+        page.querySelector('.left-side').onclick = () => this.prevPage();
+        page.querySelector('.right-side').onclick = () => this.nextPage();
         
-        // Sağ sayfa tıklama - sonraki sayfa
-        spread.querySelector('.page-right').onclick = () => this.nextSpread();
+        this.loadImage(page.querySelector('.left-side'), leftNum);
+        this.loadImage(page.querySelector('.right-side'), rightNum);
         
-        this.loadPageImage(spread.querySelector('.page-left'), leftPage);
-        this.loadPageImage(spread.querySelector('.page-right'), rightPage);
-        
-        return spread;
+        return page;
       }
       
-      createBackCoverSpread() {
-        const spread = document.createElement('div');
-        spread.className = 'page-spread back-cover-spread hidden';
-        
-        spread.innerHTML = `
-          <div class="back-cover-page">
-            <div class="loading-content">
+      createBackCover() {
+        const page = document.createElement('div');
+        page.className = 'page back-cover';
+        page.innerHTML = `
+          <div class="back-cover-side">
+            <div class="content">
               <div class="icon">📞</div>
               <div class="title">İLETİŞİM</div>
               <div class="subtitle">
@@ -509,88 +343,73 @@
           </div>
         `;
         
-        this.loadPageImage(spread.querySelector('.back-cover-page'), 28);
-        return spread;
+        this.loadImage(page.querySelector('.back-cover-side'), 28);
+        return page;
       }
       
-      loadPageImage(pageElement, pageNumber) {
+      loadImage(element, pageNum) {
         const img = new Image();
         img.onload = () => {
-          pageElement.style.backgroundImage = `url('images/${pageNumber}.jpg')`;
-          pageElement.innerHTML = '';
+          element.style.backgroundImage = `url('images/${pageNum}.jpg')`;
+          element.innerHTML = '';
         };
         img.onerror = () => {
-          console.log(`Sayfa ${pageNumber} placeholder gösteriliyor`);
+          console.log(`Sayfa ${pageNum} placeholder gösteriliyor`);
         };
-        img.src = `images/${pageNumber}.jpg`;
+        img.src = `images/${pageNum}.jpg`;
       }
       
-      showSpread(spreadIndex) {
-        if (spreadIndex < 0 || spreadIndex >= this.spreads.length) return;
-        
-        // Mevcut sayfa çevirme animasyonu
-        if (this.spreads[this.currentSpread]) {
-          this.spreads[this.currentSpread].classList.add('page-turning');
-          
-          setTimeout(() => {
-            this.spreads[this.currentSpread].classList.remove('page-turning');
-          }, 1000);
-        }
+      showPage(index) {
+        if (index < 0 || index >= this.pages.length) return;
         
         // Tüm sayfaları gizle
-        this.spreads.forEach(spread => {
-          spread.classList.add('hidden');
-          spread.classList.remove('visible');
+        this.pages.forEach(page => {
+          page.classList.remove('active');
         });
         
-        // Yeni sayfayı göster
-        setTimeout(() => {
-          this.spreads[spreadIndex].classList.remove('hidden');
-          this.spreads[spreadIndex].classList.add('visible');
-          this.currentSpread = spreadIndex;
-        }, 200);
+        // Seçili sayfayı göster
+        this.pages[index].classList.add('active');
+        this.currentPage = index;
       }
       
-      nextSpread() {
-        if (this.currentSpread < this.spreads.length - 1) {
-          this.showSpread(this.currentSpread + 1);
+      nextPage() {
+        if (this.currentPage < this.pages.length - 1) {
+          this.showPage(this.currentPage + 1);
         }
       }
       
-      prevSpread() {
-        if (this.currentSpread > 0) {
-          this.showSpread(this.currentSpread - 1);
+      prevPage() {
+        if (this.currentPage > 0) {
+          this.showPage(this.currentPage - 1);
         }
       }
       
-      setupControls() {
-        // Klavye kontrolleri
+      setupEvents() {
+        // Klavye
         document.addEventListener('keydown', (e) => {
-          if (e.keyCode === 37) this.prevSpread(); // Sol ok
-          if (e.keyCode === 39) this.nextSpread(); // Sağ ok
-          if (e.keyCode === 32) { // Space
+          if (e.keyCode === 37) this.prevPage();
+          if (e.keyCode === 39) this.nextPage();
+          if (e.keyCode === 32) {
             e.preventDefault();
-            this.nextSpread();
+            this.nextPage();
           }
         });
         
-        // Touch kontrolleri
+        // Touch
         let startX = 0;
-        const book = document.getElementById('book');
-        
-        book.addEventListener('touchstart', (e) => {
+        document.addEventListener('touchstart', (e) => {
           startX = e.touches[0].clientX;
         });
         
-        book.addEventListener('touchend', (e) => {
+        document.addEventListener('touchend', (e) => {
           const endX = e.changedTouches[0].clientX;
           const diff = startX - endX;
           
           if (Math.abs(diff) > 50) {
             if (diff > 0) {
-              this.nextSpread();
+              this.nextPage();
             } else {
-              this.prevSpread();
+              this.prevPage();
             }
           }
         });
@@ -598,23 +417,13 @@
       
       hideLoading() {
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('book-container').style.display = 'block';
-      }
-      
-      showError() {
-        document.getElementById('loading').innerHTML = `
-          <div>❌ Katalog yüklenemedi</div>
-          <div style="font-size: 18px; margin-top: 15px;">
-            Lütfen sayfayı yenileyin
-          </div>
-        `;
+        document.getElementById('container').style.display = 'block';
       }
     }
     
-    let flipbook;
-    
+    // Başlat
     document.addEventListener('DOMContentLoaded', () => {
-      flipbook = new OSSORealFlipbook();
+      new SimpleFlipbook();
     });
   </script>
 </body>
