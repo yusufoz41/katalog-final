@@ -2,9 +2,8 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OSSO Flipbook</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
   <style>
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -26,45 +25,49 @@
     }
     
     .flipbook-container {
-      perspective: 1000px;
-      margin: 20px;
-    }
-    
-    #flipbook {
+      position: relative;
       width: 800px;
       height: 600px;
-      margin: auto;
+      margin: 20px auto;
       box-shadow: 0 15px 40px rgba(0,0,0,0.3);
       border-radius: 10px;
       overflow: hidden;
+      background: white;
     }
     
     .page {
-      background-color: white;
+      position: absolute;
+      width: 400px;
+      height: 600px;
+      background: white;
+      border: 1px solid #ddd;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      border: 1px solid #ddd;
+      transition: transform 0.6s ease-in-out;
+      transform-origin: left center;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 18px;
       color: #666;
-      position: relative;
+      box-sizing: border-box;
     }
     
-    .page::before {
-      content: '';
-      position: absolute;
-      top: 0;
+    .page.flipped {
+      transform: rotateY(-180deg);
+    }
+    
+    .page-left {
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.1) 100%);
-      pointer-events: none;
+      z-index: 1;
     }
     
-    /* İlk ve son sayfa özel tasarımı */
+    .page-right {
+      right: 0;
+      z-index: 2;
+    }
+    
     .cover-page {
       background: linear-gradient(135deg, #2c3e50, #3498db);
       color: white;
@@ -87,7 +90,6 @@
       opacity: 0.9;
     }
     
-    /* Sayfa numaraları */
     .page-number {
       position: absolute;
       bottom: 20px;
@@ -99,11 +101,11 @@
       font-size: 12px;
     }
     
-    /* Kontrol butonları */
     .controls {
       margin-top: 20px;
       display: flex;
       gap: 10px;
+      align-items: center;
     }
     
     .control-btn {
@@ -117,16 +119,26 @@
       font-size: 14px;
     }
     
-    .control-btn:hover {
+    .control-btn:hover:not(:disabled) {
       background: rgba(255,255,255,0.3);
       transform: translateY(-2px);
     }
     
-    /* Yükleme animasyonu */
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .page-info {
+      color: white;
+      font-size: 16px;
+      margin: 0 15px;
+    }
+    
     .loading {
       color: white;
       font-size: 18px;
-      margin-bottom: 20px;
+      text-align: center;
     }
     
     @keyframes spin {
@@ -143,6 +155,18 @@
       animation: spin 1s linear infinite;
       margin: 0 auto 20px;
     }
+    
+    @media (max-width: 900px) {
+      .flipbook-container {
+        width: 90vw;
+        height: calc(90vw * 0.75);
+      }
+      
+      .page {
+        width: 45vw;
+        height: calc(90vw * 0.75);
+      }
+    }
   </style>
 </head>
 <body>
@@ -150,97 +174,189 @@
   
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    Katalog yükleniyor...
+    Katalog hazırlanıyor...
   </div>
   
   <div class="flipbook-container" id="flipbook-container" style="display: none;">
-    <div id="flipbook"></div>
-    <div class="controls">
-      <button class="control-btn" onclick="$('#flipbook').turn('previous')">⬅️ Önceki</button>
-      <button class="control-btn" onclick="$('#flipbook').turn('next')">Sonraki ➡️</button>
-      <button class="control-btn" onclick="$('#flipbook').turn('page', 1)">🏠 Ana Sayfa</button>
+    <div id="flipbook">
+      <!-- Sayfalar JavaScript ile yüklenecek -->
     </div>
+  </div>
+  
+  <div class="controls" id="controls" style="display: none;">
+    <button class="control-btn" id="prevBtn">⬅️ Önceki</button>
+    <div class="page-info" id="pageInfo">1 / 1</div>
+    <button class="control-btn" id="nextBtn">Sonraki ➡️</button>
+    <button class="control-btn" id="homeBtn">🏠 Ana Sayfa</button>
   </div>
 
   <script>
-    $(document).ready(function() {
-      const totalPages = 28;
-      const flipbook = document.getElementById("flipbook");
+    // Vercel için optimize edilmiş flipbook
+    class SimpleFlipbook {
+      constructor(container, totalPages) {
+        this.container = container;
+        this.totalPages = totalPages;
+        this.currentPage = 1;
+        this.pages = [];
+        this.init();
+      }
       
-      // İlk sayfa (kapak)
-      const coverPage = document.createElement("div");
-      coverPage.className = "page cover-page";
-      coverPage.innerHTML = `
-        <h2>OSSO</h2>
-        <p>Ürün Kataloğu</p>
-        <div class="page-number">1</div>
-      `;
-      flipbook.appendChild(coverPage);
+      async init() {
+        try {
+          // Sayfaları oluştur
+          await this.createPages();
+          
+          // Kontrolleri ayarla
+          this.setupControls();
+          
+          // Yükleme ekranını gizle
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('flipbook-container').style.display = 'block';
+          document.getElementById('controls').style.display = 'flex';
+          
+          // İlk sayfayı göster
+          this.showPage(1);
+          
+          console.log('Flipbook başarıla yüklendi!');
+        } catch (error) {
+          console.error('Flipbook yüklenirken hata:', error);
+          document.getElementById('loading').innerHTML = `
+            <div>❌ Yükleme hatası</div>
+            <div style="font-size: 14px; margin-top: 10px;">Lütfen sayfayı yenileyin</div>
+          `;
+        }
+      }
       
-      // Diğer sayfalar
-      for (let i = 2; i <= totalPages; i++) {
-        const page = document.createElement("div");
-        page.className = "page";
-        page.innerHTML = `
-          <div>Sayfa ${i} yükleniyor...</div>
-          <div class="page-number">${i}</div>
+      async createPages() {
+        // Kapak sayfası
+        const coverPage = document.createElement('div');
+        coverPage.className = 'page cover-page';
+        coverPage.innerHTML = `
+          <h2>OSSO</h2>
+          <p>Ürün Kataloğu</p>
+          <div class="page-number">1</div>
         `;
+        this.pages.push(coverPage);
         
-        // Resim yükleme
-        const img = new Image();
-        img.onload = function() {
-          page.style.backgroundImage = `url('images/${i}.jpg')`;
-          page.innerHTML = `<div class="page-number">${i}</div>`;
-        };
-        img.onerror = function() {
+        // Diğer sayfalar
+        for (let i = 2; i <= this.totalPages; i++) {
+          const page = document.createElement('div');
+          page.className = 'page';
           page.innerHTML = `
             <div style="text-align: center;">
-              <div>📷</div>
-              <div>Resim bulunamadı</div>
-              <div style="font-size: 14px; margin-top: 10px;">images/${i}.jpg</div>
+              <div style="font-size: 24px; margin-bottom: 20px;">📄</div>
+              <div>Sayfa ${i}</div>
+              <div style="font-size: 12px; margin-top: 10px; color: #999;">
+                images/${i}.jpg yükleniyor...
+              </div>
             </div>
             <div class="page-number">${i}</div>
           `;
-        };
-        img.src = `images/${i}.jpg`;
+          
+          // Resim yükleme (asenkron)
+          this.loadPageImage(page, i);
+          this.pages.push(page);
+        }
         
-        flipbook.appendChild(page);
+        // İlk sayfayı container'a ekle
+        this.container.appendChild(this.pages[0]);
       }
       
-      // Turn.js'i başlat
-      setTimeout(() => {
-        $('#flipbook').turn({
-          width: 800,
-          height: 600,
-          autoCenter: true,
-          elevation: 50,
-          gradients: true,
-          duration: 1000,
-          pages: totalPages,
-          when: {
-            turning: function(event, page, view) {
-              console.log('Sayfa çevriliyor:', page);
-            },
-            turned: function(event, page, view) {
-              console.log('Sayfa çevrildi:', page);
+      loadPageImage(page, pageNumber) {
+        const img = new Image();
+        img.onload = () => {
+          page.style.backgroundImage = `url('images/${pageNumber}.jpg')`;
+          page.innerHTML = `<div class="page-number">${pageNumber}</div>`;
+        };
+        img.onerror = () => {
+          page.innerHTML = `
+            <div style="text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 20px;">📷</div>
+              <div>Resim bulunamadı</div>
+              <div style="font-size: 12px; margin-top: 10px; color: #999;">
+                images/${pageNumber}.jpg
+              </div>
+            </div>
+            <div class="page-number">${pageNumber}</div>
+          `;
+        };
+        img.src = `images/${pageNumber}.jpg`;
+      }
+      
+      showPage(pageNumber) {
+        if (pageNumber < 1 || pageNumber > this.totalPages) return;
+        
+        // Mevcut sayfayı temizle
+        this.container.innerHTML = '';
+        
+        // Yeni sayfayı göster
+        this.container.appendChild(this.pages[pageNumber - 1]);
+        this.currentPage = pageNumber;
+        
+        // Sayfa bilgisini güncelle
+        document.getElementById('pageInfo').textContent = `${pageNumber} / ${this.totalPages}`;
+        
+        // Buton durumlarını güncelle
+        document.getElementById('prevBtn').disabled = pageNumber === 1;
+        document.getElementById('nextBtn').disabled = pageNumber === this.totalPages;
+      }
+      
+      setupControls() {
+        document.getElementById('prevBtn').onclick = () => {
+          if (this.currentPage > 1) {
+            this.showPage(this.currentPage - 1);
+          }
+        };
+        
+        document.getElementById('nextBtn').onclick = () => {
+          if (this.currentPage < this.totalPages) {
+            this.showPage(this.currentPage + 1);
+          }
+        };
+        
+        document.getElementById('homeBtn').onclick = () => {
+          this.showPage(1);
+        };
+        
+        // Klavye kontrolleri
+        document.addEventListener('keydown', (e) => {
+          if (e.keyCode === 37) { // Sol ok
+            this.showPage(this.currentPage - 1);
+          } else if (e.keyCode === 39) { // Sağ ok
+            this.showPage(this.currentPage + 1);
+          }
+        });
+        
+        // Touch kontrolleri (mobil)
+        let startX = 0;
+        this.container.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        });
+        
+        this.container.addEventListener('touchend', (e) => {
+          const endX = e.changedTouches[0].clientX;
+          const diff = startX - endX;
+          
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              this.showPage(this.currentPage + 1); // Sola kaydır = sonraki
+            } else {
+              this.showPage(this.currentPage - 1); // Sağa kaydır = önceki
             }
           }
         });
-        
-        // Yükleme ekranını gizle
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('flipbook-container').style.display = 'block';
-        
-        // Klavye kontrolleri
-        $(document).keydown(function(e) {
-          if (e.keyCode == 37) { // Sol ok
-            $('#flipbook').turn('previous');
-          } else if (e.keyCode == 39) { // Sağ ok
-            $('#flipbook').turn('next');
-          }
-        });
-        
-      }, 500);
+      }
+    }
+    
+    // Sayfa yüklendiğinde flipbook'u başlat
+    document.addEventListener('DOMContentLoaded', () => {
+      const totalPages = 28;
+      const flipbookContainer = document.getElementById('flipbook');
+      
+      // Kısa bir gecikme ile başlat (Vercel için)
+      setTimeout(() => {
+        new SimpleFlipbook(flipbookContainer, totalPages);
+      }, 100);
     });
   </script>
 </body>
