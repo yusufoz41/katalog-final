@@ -319,9 +319,10 @@
     @media (max-width: 900px) {
       .container { 
         padding: 0;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         height: 100vh;
+        padding-top: 15vh; /* Web'deki gibi biraz aşağıda */
       }
       
       .mobile-instruction {
@@ -336,7 +337,7 @@
       .book { 
         width: calc(100vw - 20px);
         height: calc((100vw - 20px) * 0.625); /* Aspect ratio korunuyor */
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 25vh - 60px); /* Üst ve alt boşluk */
         min-height: 300px;
         transform: none;
         /* Pinch-to-zoom için */
@@ -346,14 +347,14 @@
       /* Eğer yükseklik çok fazla olursa, yüksekliğe göre ayarla */
       @supports (width: min(100vw, 100vh)) {
         .book {
-          width: min(calc(100vw - 20px), calc((100vh - 80px) / 0.625));
-          height: min(calc((100vw - 20px) * 0.625), calc(100vh - 80px));
+          width: min(calc(100vw - 20px), calc((100vh - 25vh - 60px) / 0.625));
+          height: min(calc((100vw - 20px) * 0.625), calc(100vh - 25vh - 60px));
         }
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
-        width: calc((min(calc(100vw - 20px), calc((100vh - 80px) / 0.625))) / 2);
-        height: min(calc((100vw - 20px) * 0.625), calc(100vh - 80px));
+        width: calc((min(calc(100vw - 20px), calc((100vh - 25vh - 60px) / 0.625))) / 2);
+        height: min(calc((100vw - 20px) * 0.625), calc(100vh - 25vh - 60px));
         /* Pinch-to-zoom için */
         touch-action: manipulation;
       }
@@ -362,7 +363,7 @@
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 20px) / 2);
         height: calc((100vw - 20px) * 0.625);
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 25vh - 60px);
         min-height: 300px;
         touch-action: manipulation;
       }
@@ -416,15 +417,16 @@
     @media (max-width: 600px) {
       .container { 
         padding: 0;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         height: 100vh;
+        padding-top: 12vh; /* Biraz daha az boşluk */
       }
       
       .book { 
         width: calc(100vw - 16px);
         height: calc((100vw - 16px) * 0.625);
-        max-height: calc(100vh - 60px);
+        max-height: calc(100vh - 20vh - 50px);
         min-height: 280px;
         touch-action: manipulation;
       }
@@ -432,7 +434,7 @@
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 16px) / 2);
         height: calc((100vw - 16px) * 0.625);
-        max-height: calc(100vh - 60px);
+        max-height: calc(100vh - 20vh - 50px);
         min-height: 280px;
         touch-action: manipulation;
       }
@@ -463,15 +465,16 @@
     @media (max-width: 400px) {
       .container {
         padding: 0;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         height: 100vh;
+        padding-top: 10vh; /* En küçük ekranlarda daha az */
       }
       
       .book { 
         width: calc(100vw - 10px);
         height: calc((100vw - 10px) * 0.625);
-        max-height: calc(100vh - 50px);
+        max-height: calc(100vh - 18vh - 40px);
         min-height: 250px;
         touch-action: manipulation;
       }
@@ -479,7 +482,7 @@
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 10px) / 2);
         height: calc((100vw - 10px) * 0.625);
-        max-height: calc(100vh - 50px);
+        max-height: calc(100vh - 18vh - 40px);
         min-height: 250px;
         touch-action: manipulation;
       }
