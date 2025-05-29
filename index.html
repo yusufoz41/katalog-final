@@ -28,15 +28,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: 80px;
+      padding-top: 80px; /* Kitabı aşağı indirdik */
     }
     
     .book {
       width: 1600px;
       height: 1000px;
       position: relative;
-      perspective: 2500px;
-      transform: perspective(2500px) rotateX(10deg) rotateY(-5deg);
+      perspective: 2000px;
+      transform: perspective(2000px) rotateX(5deg) rotateY(-5deg);
       margin: 0 auto;
     }
     
@@ -48,13 +48,10 @@
       height: 100%;
       display: flex;
       border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2), 
-                  0 0 0 1px rgba(0,0,0,0.05);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       opacity: 0;
-      transform: scale(0.95);
-      transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
+      transform: scale(0.9);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     .page.active {
@@ -62,86 +59,64 @@
       transform: scale(1);
     }
     
-    /* Gerçekçi sayfa çevirme animasyonları */
+    /* Basit ama gerçekçi sayfa çevirme */
     .page.page-turning-next {
-      animation: turnNext 0.8s ease-out forwards;
-      transform-origin: left center;
+      animation: simpleTurnNext 0.6s ease-out forwards;
     }
     
     .page.page-turning-prev {
-      animation: turnPrev 0.8s ease-out forwards;
-      transform-origin: right center;
+      animation: simpleTurnPrev 0.6s ease-out forwards;
     }
     
-    @keyframes turnNext {
+    @keyframes simpleTurnNext {
       0% {
-        transform: scale(1) rotateY(0deg);
+        transform: scale(1);
         opacity: 1;
       }
-      50% {
-        transform: scale(0.98) rotateY(-15deg) translateX(20px);
-        box-shadow: -15px 0 40px rgba(0,0,0,0.3);
-        opacity: 0.8;
-      }
       100% {
-        transform: scale(0.95) rotateY(-30deg) translateX(50px);
+        transform: scale(0.95) translateX(30px);
         opacity: 0;
       }
     }
     
-    @keyframes turnPrev {
+    @keyframes simpleTurnPrev {
       0% {
-        transform: scale(1) rotateY(0deg);
+        transform: scale(1);
         opacity: 1;
       }
-      50% {
-        transform: scale(0.98) rotateY(15deg) translateX(-20px);
-        box-shadow: 15px 0 40px rgba(0,0,0,0.3);
-        opacity: 0.8;
-      }
       100% {
-        transform: scale(0.95) rotateY(30deg) translateX(-50px);
+        transform: scale(0.95) translateX(-30px);
         opacity: 0;
       }
     }
     
     /* Gelen sayfa animasyonu */
     .page.page-entering-next {
-      animation: enterNext 0.8s ease-out forwards;
+      animation: simpleEnterNext 0.6s ease-out forwards;
     }
     
     .page.page-entering-prev {
-      animation: enterPrev 0.8s ease-out forwards;
+      animation: simpleEnterPrev 0.6s ease-out forwards;
     }
     
-    @keyframes enterNext {
+    @keyframes simpleEnterNext {
       0% {
-        transform: scale(0.95) rotateY(30deg) translateX(-50px);
+        transform: scale(0.95) translateX(-30px);
         opacity: 0;
       }
-      50% {
-        transform: scale(0.98) rotateY(15deg) translateX(-20px);
-        box-shadow: 15px 0 40px rgba(0,0,0,0.3);
-        opacity: 0.8;
-      }
       100% {
-        transform: scale(1) rotateY(0deg) translateX(0);
+        transform: scale(1) translateX(0px);
         opacity: 1;
       }
     }
     
-    @keyframes enterPrev {
+    @keyframes simpleEnterPrev {
       0% {
-        transform: scale(0.95) rotateY(-30deg) translateX(50px);
+        transform: scale(0.95) translateX(30px);
         opacity: 0;
       }
-      50% {
-        transform: scale(0.98) rotateY(-15deg) translateX(20px);
-        box-shadow: -15px 0 40px rgba(0,0,0,0.3);
-        opacity: 0.8;
-      }
       100% {
-        transform: scale(1) rotateY(0deg) translateX(0);
+        transform: scale(1) translateX(0px);
         opacity: 1;
       }
     }
@@ -205,22 +180,6 @@
     
     .right-side:hover {
       transform: perspective(1000px) rotateY(15deg) translateX(40px);
-    }
-    
-    /* Sayfa kenarı efektleri */
-    .left-side::before, .right-side::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      width: 15px;
-      height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
-      z-index: 2;
-    }
-    
-    .right-side::before {
-      right: 0;
-      background: linear-gradient(to left, rgba(0,0,0,0.1), transparent);
     }
     
     /* Cilt çizgisi */
@@ -343,7 +302,7 @@
     @media (max-width: 900px) {
       .book { width: 600px; height: 400px; }
       .cover-side, .left-side, .right-side, .back-cover-side { width: 300px; height: 400px; }
-      .container { padding-top: 40px; }
+      .container { padding-top: 40px; } /* Mobilde daha az padding */
     }
   </style>
 </head>
@@ -360,12 +319,12 @@
   </div>
 
   <script>
-    class RealisticFlipbook {
+    class SimpleFlipbook {
       constructor() {
         this.currentPage = 0;
         this.pages = [];
         this.totalPages = 14;
-        this.isAnimating = false;
+        this.isAnimating = false; // Animasyon kontrolü
         this.init();
       }
       
@@ -501,14 +460,14 @@
           setTimeout(() => {
             newPage.classList.add(direction === 'next' ? 'page-entering-next' : 'page-entering-prev');
             newPage.classList.add('active');
-          }, 150);
+          }, 100);
           
           // Animasyon temizliği
           setTimeout(() => {
             currentActivePage.classList.remove('page-turning-next', 'page-turning-prev');
             newPage.classList.remove('page-entering-next', 'page-entering-prev');
             this.isAnimating = false;
-          }, 1000);
+          }, 1200);
         } else {
           // İlk gösterimde animasyon yok
           this.pages.forEach(page => {
@@ -565,11 +524,6 @@
             }
           }
         });
-        
-        // Touch move engelleme
-        document.addEventListener('touchmove', (e) => {
-          e.preventDefault();
-        }, { passive: false });
       }
       
       hideLoading() {
@@ -580,7 +534,7 @@
     
     // Başlat
     document.addEventListener('DOMContentLoaded', () => {
-      new RealisticFlipbook();
+      new SimpleFlipbook();
     });
   </script>
 </body>
