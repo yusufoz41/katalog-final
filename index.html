@@ -318,9 +318,10 @@
     
     @media (max-width: 900px) {
       .container { 
-        padding: 10px;
+        padding: 0;
         justify-content: center;
         align-items: center;
+        height: 100vh;
       }
       
       .mobile-instruction {
@@ -335,30 +336,35 @@
       .book { 
         width: calc(100vw - 20px);
         height: calc((100vw - 20px) * 0.625); /* Aspect ratio korunuyor */
-        max-height: calc(100vh - 120px);
+        max-height: calc(100vh - 80px);
         min-height: 300px;
         transform: none;
+        /* Pinch-to-zoom için */
+        touch-action: manipulation;
       }
       
       /* Eğer yükseklik çok fazla olursa, yüksekliğe göre ayarla */
       @supports (width: min(100vw, 100vh)) {
         .book {
-          width: min(calc(100vw - 20px), calc((100vh - 120px) / 0.625));
-          height: min(calc((100vw - 20px) * 0.625), calc(100vh - 120px));
+          width: min(calc(100vw - 20px), calc((100vh - 80px) / 0.625));
+          height: min(calc((100vw - 20px) * 0.625), calc(100vh - 80px));
         }
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
-        width: calc((min(calc(100vw - 20px), calc((100vh - 120px) / 0.625))) / 2);
-        height: min(calc((100vw - 20px) * 0.625), calc(100vh - 120px));
+        width: calc((min(calc(100vw - 20px), calc((100vh - 80px) / 0.625))) / 2);
+        height: min(calc((100vw - 20px) * 0.625), calc(100vh - 80px));
+        /* Pinch-to-zoom için */
+        touch-action: manipulation;
       }
       
       /* Fallback for older browsers */
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 20px) / 2);
         height: calc((100vw - 20px) * 0.625);
-        max-height: calc(100vh - 120px);
+        max-height: calc(100vh - 80px);
         min-height: 300px;
+        touch-action: manipulation;
       }
       
       /* Mobilde basit tasarım */
@@ -409,23 +415,26 @@
     
     @media (max-width: 600px) {
       .container { 
-        padding: 8px;
+        padding: 0;
         justify-content: center;
         align-items: center;
+        height: 100vh;
       }
       
       .book { 
         width: calc(100vw - 16px);
         height: calc((100vw - 16px) * 0.625);
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 60px);
         min-height: 280px;
+        touch-action: manipulation;
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 16px) / 2);
         height: calc((100vw - 16px) * 0.625);
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 60px);
         min-height: 280px;
+        touch-action: manipulation;
       }
       
       .mobile-instruction {
@@ -453,23 +462,26 @@
     
     @media (max-width: 400px) {
       .container {
-        padding: 5px;
+        padding: 0;
         justify-content: center;
         align-items: center;
+        height: 100vh;
       }
       
       .book { 
         width: calc(100vw - 10px);
         height: calc((100vw - 10px) * 0.625);
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 50px);
         min-height: 250px;
+        touch-action: manipulation;
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
         width: calc((100vw - 10px) / 2);
         height: calc((100vw - 10px) * 0.625);
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 50px);
         min-height: 250px;
+        touch-action: manipulation;
       }
       
       .mobile-instruction {
@@ -506,7 +518,7 @@
       <!-- Sayfalar buraya yüklenecek -->
     </div>
     <div class="mobile-instruction">
-      👆 Sayfaları çevirmek için dokunun &nbsp;|&nbsp; ← → Kaydırın
+      👆 Dokunun | ← → Kaydırın | 🤏 Büyütün
     </div>
   </div>
 
@@ -697,24 +709,32 @@
           }
         });
         
-        // Touch
+        // Touch - pinch-to-zoom için güncelleme
         let startX = 0;
+        let touchCount = 0;
+        
         document.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
+          touchCount = e.touches.length;
+          if (touchCount === 1) {
+            startX = e.touches[0].clientX;
+          }
         });
         
         document.addEventListener('touchend', (e) => {
-          if (this.isAnimating) return;
-          const endX = e.changedTouches[0].clientX;
-          const diff = startX - endX;
-          
-          if (Math.abs(diff) > 50) {
-            if (diff > 0) {
-              this.nextPage();
-            } else {
-              this.prevPage();
+          // Sadece tek parmak touch'ında sayfa çevirme
+          if (touchCount === 1 && !this.isAnimating) {
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+              if (diff > 0) {
+                this.nextPage();
+              } else {
+                this.prevPage();
+              }
             }
           }
+          touchCount = 0;
         });
       }
       
