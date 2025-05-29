@@ -246,9 +246,14 @@
         try {
           this.createAllSpreads();
           this.setupControls();
-          this.hideLoading();
-          this.showSpread(0);
-          console.log('OSSO Flipbook hazır! 📖');
+          
+          // Yükleme ekranını hemen gizle - resimleri arka planda yükle
+          setTimeout(() => {
+            this.hideLoading();
+            this.showSpread(0);
+            console.log('OSSO Flipbook hazır! 📖');
+          }, 1000);
+          
         } catch (error) {
           console.error('Flipbook hatası:', error);
           this.showError();
@@ -341,14 +346,26 @@
       loadPageImage(pageElement, pageNumber) {
         const img = new Image();
         img.onload = () => {
-          pageElement.style.backgroundImage = `url('page${pageNumber}.jpg')`;
+          // Resim yüklendiyse arka plan olarak ayarla
+          pageElement.style.backgroundImage = `url('images/${pageNumber}.jpg')`;
           pageElement.innerHTML = ''; // Loading content'i temizle
         };
         img.onerror = () => {
-          // Fallback - loading content'i koru
-          console.log(`Sayfa ${pageNumber} resmi yüklenemedi`);
+          // Resim yoksa veya yüklenemezse placeholder'ı güncelle
+          const content = pageElement.querySelector('.loading-content');
+          if (content) {
+            content.innerHTML = `
+              <div class="icon">🖼️</div>
+              <div>Sayfa ${pageNumber}</div>
+              <div style="font-size: 12px; margin-top: 10px; color: #999;">
+                Resim bulunamadı<br>
+                images/${pageNumber}.jpg
+              </div>
+            `;
+          }
         };
-        img.src = `page${pageNumber}.jpg`;
+        // Farklı resim yollarını dene
+        img.src = `images/${pageNumber}.jpg`;
       }
       
       showSpread(spreadIndex) {
@@ -453,9 +470,14 @@
     
     // Flipbook'u başlat
     document.addEventListener('DOMContentLoaded', () => {
+      // Debug için konsola bilgi yazdır
+      console.log('DOM yüklendi, flipbook başlatılıyor...');
+      
+      // Kısa gecikme ile başlat
       setTimeout(() => {
+        console.log('Flipbook sınıfı oluşturuluyor...');
         new OSSORealFlipbook();
-      }, 500);
+      }, 100);
     });
   </script>
 </body>
