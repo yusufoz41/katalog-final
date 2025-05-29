@@ -4,52 +4,244 @@
   <meta charset="UTF-8">
   <title>OSSO Flipbook</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/turn.js@4/turn.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
   <style>
     body {
-      background: #f0f0f0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-family: sans-serif;
-      padding: 40px 20px;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
     }
+    
+    h1 {
+      color: white;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .flipbook-container {
+      perspective: 1000px;
+      margin: 20px;
+    }
+    
     #flipbook {
       width: 800px;
-      height: 500px;
+      height: 600px;
       margin: auto;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      overflow: hidden;
     }
+    
     .page {
       background-color: white;
       background-size: cover;
       background-position: center;
+      background-repeat: no-repeat;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #666;
+      position: relative;
+    }
+    
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.1) 100%);
+      pointer-events: none;
+    }
+    
+    /* İlk ve son sayfa özel tasarımı */
+    .cover-page {
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .cover-page h2 {
+      font-size: 3em;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .cover-page p {
+      font-size: 1.2em;
+      margin-top: 20px;
+      opacity: 0.9;
+    }
+    
+    /* Sayfa numaraları */
+    .page-number {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+    
+    /* Kontrol butonları */
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .control-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .control-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    
+    /* Yükleme animasyonu */
+    .loading {
+      color: white;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
     }
   </style>
 </head>
 <body>
-
   <h1>📘 OSSO Katalog</h1>
-  <div id="flipbook"></div>
+  
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Katalog yükleniyor...
+  </div>
+  
+  <div class="flipbook-container" id="flipbook-container" style="display: none;">
+    <div id="flipbook"></div>
+    <div class="controls">
+      <button class="control-btn" onclick="$('#flipbook').turn('previous')">⬅️ Önceki</button>
+      <button class="control-btn" onclick="$('#flipbook').turn('next')">Sonraki ➡️</button>
+      <button class="control-btn" onclick="$('#flipbook').turn('page', 1)">🏠 Ana Sayfa</button>
+    </div>
+  </div>
 
   <script>
-    const totalPages = 28; // toplam sayfa adedini yaz
-    const flipbook = document.getElementById("flipbook");
-
-    for (let i = 1; i <= totalPages; i++) {
-      const page = document.createElement("div");
-      page.className = "page";
-      page.style.backgroundImage = `url('images/${i}.jpg')`;
-      page.style.width = "400px";
-      page.style.height = "500px";
-      flipbook.appendChild(page);
-    }
-
-    $('#flipbook').turn({
-      width: 800,
-      height: 500,
-      autoCenter: true
+    $(document).ready(function() {
+      const totalPages = 28;
+      const flipbook = document.getElementById("flipbook");
+      
+      // İlk sayfa (kapak)
+      const coverPage = document.createElement("div");
+      coverPage.className = "page cover-page";
+      coverPage.innerHTML = `
+        <h2>OSSO</h2>
+        <p>Ürün Kataloğu</p>
+        <div class="page-number">1</div>
+      `;
+      flipbook.appendChild(coverPage);
+      
+      // Diğer sayfalar
+      for (let i = 2; i <= totalPages; i++) {
+        const page = document.createElement("div");
+        page.className = "page";
+        page.innerHTML = `
+          <div>Sayfa ${i} yükleniyor...</div>
+          <div class="page-number">${i}</div>
+        `;
+        
+        // Resim yükleme
+        const img = new Image();
+        img.onload = function() {
+          page.style.backgroundImage = `url('images/${i}.jpg')`;
+          page.innerHTML = `<div class="page-number">${i}</div>`;
+        };
+        img.onerror = function() {
+          page.innerHTML = `
+            <div style="text-align: center;">
+              <div>📷</div>
+              <div>Resim bulunamadı</div>
+              <div style="font-size: 14px; margin-top: 10px;">images/${i}.jpg</div>
+            </div>
+            <div class="page-number">${i}</div>
+          `;
+        };
+        img.src = `images/${i}.jpg`;
+        
+        flipbook.appendChild(page);
+      }
+      
+      // Turn.js'i başlat
+      setTimeout(() => {
+        $('#flipbook').turn({
+          width: 800,
+          height: 600,
+          autoCenter: true,
+          elevation: 50,
+          gradients: true,
+          duration: 1000,
+          pages: totalPages,
+          when: {
+            turning: function(event, page, view) {
+              console.log('Sayfa çevriliyor:', page);
+            },
+            turned: function(event, page, view) {
+              console.log('Sayfa çevrildi:', page);
+            }
+          }
+        });
+        
+        // Yükleme ekranını gizle
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('flipbook-container').style.display = 'block';
+        
+        // Klavye kontrolleri
+        $(document).keydown(function(e) {
+          if (e.keyCode == 37) { // Sol ok
+            $('#flipbook').turn('previous');
+          } else if (e.keyCode == 39) { // Sağ ok
+            $('#flipbook').turn('next');
+          }
+        });
+        
+      }, 500);
     });
   </script>
-
 </body>
 </html>
