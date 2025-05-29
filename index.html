@@ -28,6 +28,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding-top: 80px; /* Kitabı aşağı indirdik */
     }
     
     .book {
@@ -50,12 +51,90 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       opacity: 0;
       transform: scale(0.9);
-      transition: all 0.8s ease;
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     .page.active {
       opacity: 1;
       transform: scale(1);
+    }
+    
+    /* Sayfa geçiş animasyonları */
+    .page.page-turning-next {
+      animation: turnPageNext 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    .page.page-turning-prev {
+      animation: turnPagePrev 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    @keyframes turnPageNext {
+      0% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(0.95) rotateY(-90deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(0.9) rotateY(-180deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes turnPagePrev {
+      0% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(0.95) rotateY(90deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(0.9) rotateY(180deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Gelen sayfa animasyonu */
+    .page.page-entering-next {
+      animation: enterPageNext 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    .page.page-entering-prev {
+      animation: enterPagePrev 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    @keyframes enterPageNext {
+      0% {
+        transform: scale(0.9) rotateY(180deg);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(0.95) rotateY(90deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes enterPagePrev {
+      0% {
+        transform: scale(0.9) rotateY(-180deg);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(0.95) rotateY(-90deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
     }
     
     /* KAPAK - sağ tarafta tek */
@@ -75,6 +154,7 @@
       box-shadow: -10px 0 30px rgba(0,0,0,0.3);
       border-left: 8px solid #e2e8f0;
       position: relative;
+      transition: transform 0.3s ease;
     }
     
     .cover-side:hover {
@@ -95,6 +175,7 @@
       border-radius: 15px;
       cursor: pointer;
       position: relative;
+      transition: transform 0.3s ease;
     }
     
     .left-side {
@@ -151,6 +232,7 @@
       box-shadow: 0 0 50px rgba(0,0,0,0.5);
       border: 4px solid #e2e8f0;
       position: relative;
+      transition: transform 0.3s ease;
     }
     
     /* Loading content */
@@ -236,6 +318,7 @@
     @media (max-width: 900px) {
       .book { width: 600px; height: 400px; }
       .cover-side, .left-side, .right-side, .back-cover-side { width: 300px; height: 400px; }
+      .container { padding-top: 40px; } /* Mobilde daha az padding */
     }
   </style>
 </head>
@@ -257,6 +340,7 @@
         this.currentPage = 0;
         this.pages = [];
         this.totalPages = 14;
+        this.isAnimating = false; // Animasyon kontrolü
         this.init();
       }
       
@@ -358,9 +442,7 @@
           </div>
         `;
         
-        // Arka kapaktan geri dönüş
         page.querySelector('.back-cover-side').onclick = () => this.prevPage();
-        
         this.loadImage(page.querySelector('.back-cover-side'), 28);
         return page;
       }
@@ -377,34 +459,60 @@
         img.src = `images/${pageNum}.jpg`;
       }
       
-      showPage(index) {
-        if (index < 0 || index >= this.pages.length) return;
+      showPage(index, direction = null) {
+        if (index < 0 || index >= this.pages.length || this.isAnimating) return;
         
-        // Tüm sayfaları gizle
-        this.pages.forEach(page => {
-          page.classList.remove('active');
-        });
+        const currentActivePage = this.pages[this.currentPage];
+        const newPage = this.pages[index];
         
-        // Seçili sayfayı göster
-        this.pages[index].classList.add('active');
+        if (direction) {
+          this.isAnimating = true;
+          
+          // Mevcut sayfayı çevir
+          currentActivePage.classList.remove('active');
+          currentActivePage.classList.add(direction === 'next' ? 'page-turning-next' : 'page-turning-prev');
+          
+          // Yeni sayfayı getir
+          setTimeout(() => {
+            newPage.classList.add(direction === 'next' ? 'page-entering-next' : 'page-entering-prev');
+            newPage.classList.add('active');
+          }, 100);
+          
+          // Animasyon temizliği
+          setTimeout(() => {
+            currentActivePage.classList.remove('page-turning-next', 'page-turning-prev');
+            newPage.classList.remove('page-entering-next', 'page-entering-prev');
+            this.isAnimating = false;
+          }, 800);
+        } else {
+          // İlk gösterimde animasyon yok
+          this.pages.forEach(page => {
+            page.classList.remove('active');
+          });
+          newPage.classList.add('active');
+        }
+        
         this.currentPage = index;
       }
       
       nextPage() {
+        if (this.isAnimating) return;
         if (this.currentPage < this.pages.length - 1) {
-          this.showPage(this.currentPage + 1);
+          this.showPage(this.currentPage + 1, 'next');
         }
       }
       
       prevPage() {
+        if (this.isAnimating) return;
         if (this.currentPage > 0) {
-          this.showPage(this.currentPage - 1);
+          this.showPage(this.currentPage - 1, 'prev');
         }
       }
       
       setupEvents() {
         // Klavye
         document.addEventListener('keydown', (e) => {
+          if (this.isAnimating) return;
           if (e.keyCode === 37) this.prevPage();
           if (e.keyCode === 39) this.nextPage();
           if (e.keyCode === 32) {
@@ -420,6 +528,7 @@
         });
         
         document.addEventListener('touchend', (e) => {
+          if (this.isAnimating) return;
           const endX = e.changedTouches[0].clientX;
           const diff = startX - endX;
           
