@@ -300,9 +300,163 @@
     }
     
     @media (max-width: 900px) {
-      .book { width: 600px; height: 400px; }
-      .cover-side, .left-side, .right-side, .back-cover-side { width: 300px; height: 400px; }
-      .container { padding-top: 40px; } /* Mobilde daha az padding */
+      .container { 
+        padding-top: 20px;
+        padding: 10px;
+      }
+      
+      .book { 
+        width: 95vw; 
+        height: 60vh;
+        min-height: 400px;
+        transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+      }
+      
+      .cover-side, .left-side, .right-side, .back-cover-side { 
+        width: calc(95vw / 2); 
+        height: 60vh;
+        min-height: 400px;
+      }
+      
+      /* Mobilde 3D efektleri kaldır */
+      .left-side {
+        transform: perspective(800px) rotateY(-3deg) translateX(-10px) !important;
+        box-shadow: 3px 0 15px rgba(0,0,0,0.2);
+      }
+      
+      .right-side {
+        transform: perspective(800px) rotateY(3deg) translateX(10px) !important;
+        box-shadow: -3px 0 15px rgba(0,0,0,0.2);
+      }
+      
+      .cover-side {
+        transform: perspective(800px) rotateY(-5deg) !important;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+      }
+      
+      .back-cover-side {
+        transform: perspective(800px) rotateY(0deg) !important;
+        box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      }
+      
+      /* Mobilde hover efektlerini kaldır */
+      .left-side:hover, .right-side:hover, .cover-side:hover, .back-cover-side:hover {
+        transform: perspective(800px) rotateY(-3deg) translateX(-10px) !important;
+      }
+      
+      .right-side:hover {
+        transform: perspective(800px) rotateY(3deg) translateX(10px) !important;
+      }
+      
+      .cover-side:hover {
+        transform: perspective(800px) rotateY(-5deg) !important;
+      }
+      
+      .back-cover-side:hover {
+        transform: perspective(800px) rotateY(0deg) !important;
+      }
+      
+      /* Mobilde font boyutlarını küçült */
+      .content .icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+      
+      .content .title {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+      }
+      
+      .content .subtitle {
+        font-size: 1em;
+        line-height: 1.4;
+      }
+      
+      /* Cilt çizgisini mobilde küçült */
+      .normal::after {
+        width: 4px;
+        top: 10%;
+        height: 80%;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .container { 
+        padding: 5px;
+        padding-top: 10px;
+      }
+      
+      .book { 
+        width: 98vw; 
+        height: 50vh;
+        min-height: 320px;
+        transform: none;
+      }
+      
+      .cover-side, .left-side, .right-side, .back-cover-side { 
+        width: calc(98vw / 2); 
+        height: 50vh;
+        min-height: 320px;
+      }
+      
+      /* Çok küçük ekranlarda 3D efektleri tamamen kaldır */
+      .left-side, .right-side, .cover-side, .back-cover-side {
+        transform: none !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+      }
+      
+      .left-side:hover, .right-side:hover, .cover-side:hover, .back-cover-side:hover {
+        transform: none !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+      }
+      
+      /* Font boyutlarını daha da küçült */
+      .content .icon {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+      
+      .content .title {
+        font-size: 1.2em;
+        margin-bottom: 8px;
+      }
+      
+      .content .subtitle {
+        font-size: 0.9em;
+        line-height: 1.3;
+      }
+      
+      /* Cilt çizgisini gizle */
+      .normal::after {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      .book { 
+        height: 45vh;
+        min-height: 280px;
+      }
+      
+      .cover-side, .left-side, .right-side, .back-cover-side { 
+        height: 45vh;
+        min-height: 280px;
+      }
+      
+      .content .icon {
+        font-size: 2em;
+        margin-bottom: 8px;
+      }
+      
+      .content .title {
+        font-size: 1em;
+        margin-bottom: 6px;
+      }
+      
+      .content .subtitle {
+        font-size: 0.8em;
+        line-height: 1.2;
+      }
     }
   </style>
 </head>
@@ -467,7 +621,7 @@
             currentActivePage.classList.remove('page-turning-next', 'page-turning-prev');
             newPage.classList.remove('page-entering-next', 'page-entering-prev');
             this.isAnimating = false;
-          }, 1200);
+          }, 600);
         } else {
           // İlk gösterimde animasyon yok
           this.pages.forEach(page => {
