@@ -14,44 +14,46 @@
     body {
       background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
       font-family: 'Arial', sans-serif;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 15px;
       overflow: hidden;
-    }
-    
-    h1 {
-      color: white;
-      font-size: 2.5em;
-      margin-bottom: 25px;
-      text-shadow: 3px 3px 15px rgba(0,0,0,0.7);
-      text-align: center;
-      font-weight: 300;
-      letter-spacing: 2px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
     }
     
     .book-container {
       perspective: 2500px;
       position: relative;
       transform-style: preserve-3d;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .book {
       position: relative;
-      width: 1400px;  /* Çok büyük tam ekran */
-      height: 900px;  /* Dikey dikdörtgen oran */
+      width: min(1400px, 90vw);
+      height: min(900px, 80vh);
       transform-style: preserve-3d;
-      margin: 0 auto;
       border-radius: 15px;
       overflow: visible;
       background: transparent;
       transform: perspective(2500px) rotateX(5deg) rotateY(-5deg);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      margin-left: min(-700px, -45vw);
+      margin-top: min(-450px, -40vh);
     }
     
-    /* Kitap gölgesi ve masa efekti */
+    /* Kitap gölgesi */
     .book::before {
       content: '';
       position: absolute;
@@ -72,31 +74,35 @@
       height: 100%;
       display: flex;
       background: transparent;
-      transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       border-radius: 15px;
       overflow: visible;
       transform-style: preserve-3d;
+      top: 0;
+      left: 0;
     }
     
     .page-spread.hidden {
       opacity: 0;
       pointer-events: none;
       transform: translateZ(-50px) scale(0.9);
+      transition: all 0.8s ease;
     }
     
     .page-spread.visible {
       opacity: 1;
+      pointer-events: auto;
       transform: translateZ(0) scale(1);
+      transition: all 0.8s ease;
     }
     
-    /* KAPAK - Sağ tarafta, gerçek kitap gibi */
+    /* KAPAK - Sağ tarafta */
     .cover-spread {
       justify-content: flex-end;
     }
     
     .cover-page {
-      width: 700px;
-      height: 900px;
+      width: 50%;
+      height: 100%;
       background: #ffffff;
       background-size: cover;
       background-position: center;
@@ -104,24 +110,19 @@
       position: relative;
       cursor: pointer;
       transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      border-radius: 15px 15px 15px 15px;
+      border-radius: 15px;
       transform-origin: left center;
       box-shadow: 
         -10px 0 30px rgba(0,0,0,0.4),
-        -20px 0 50px rgba(0,0,0,0.2),
-        inset 5px 0 10px rgba(255,255,255,0.1);
+        -20px 0 50px rgba(0,0,0,0.2);
       border-left: 8px solid #e2e8f0;
     }
     
     .cover-page:hover {
       transform: perspective(1500px) rotateY(-25deg) translateX(-30px);
-      box-shadow: 
-        -15px 0 40px rgba(0,0,0,0.5),
-        -30px 0 80px rgba(0,0,0,0.3),
-        inset 5px 0 15px rgba(255,255,255,0.2);
     }
     
-    /* Kapak üzerinde sayfa açılma efekti */
+    /* Kapak çevirme efekti */
     .cover-page::after {
       content: '';
       position: absolute;
@@ -143,15 +144,15 @@
       transform: translateX(10px);
     }
     
-    /* NORMAL SAYFALAR - Gerçek kitap açık hali */
+    /* NORMAL SAYFALAR */
     .normal-spread {
       position: relative;
       background: transparent;
     }
     
     .page-left, .page-right {
-      width: 700px;
-      height: 900px;
+      width: 50%;
+      height: 100%;
       position: relative;
       background: #ffffff;
       overflow: hidden;
@@ -159,29 +160,36 @@
       background-position: center;
       background-repeat: no-repeat;
       border-radius: 15px;
+      cursor: pointer;
     }
     
-    /* Sol sayfa - sola doğru açık */
+    /* Sol sayfa */
     .page-left {
       transform-origin: right center;
       transform: perspective(1500px) rotateY(-8deg) translateX(-20px);
-      box-shadow: 
-        5px 0 25px rgba(0,0,0,0.3),
-        10px 0 50px rgba(0,0,0,0.1);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.3);
       border-right: 3px solid #f1f5f9;
     }
     
-    /* Sağ sayfa - sağa doğru açık */
+    .page-left:hover {
+      transform: perspective(1500px) rotateY(-15deg) translateX(-40px);
+      transition: transform 0.5s ease;
+    }
+    
+    /* Sağ sayfa */
     .page-right {
       transform-origin: left center;
       transform: perspective(1500px) rotateY(8deg) translateX(20px);
-      box-shadow: 
-        -5px 0 25px rgba(0,0,0,0.3),
-        -10px 0 50px rgba(0,0,0,0.1);
+      box-shadow: -5px 0 25px rgba(0,0,0,0.3);
       border-left: 3px solid #f1f5f9;
     }
     
-    /* Cilt çizgisi ortada - daha gerçekçi */
+    .page-right:hover {
+      transform: perspective(1500px) rotateY(15deg) translateX(40px);
+      transition: transform 0.5s ease;
+    }
+    
+    /* Cilt çizgisi */
     .normal-spread::after {
       content: '';
       position: absolute;
@@ -201,31 +209,31 @@
         -4px 0 12px rgba(0,0,0,0.4),
         4px 0 12px rgba(0,0,0,0.4);
       border-radius: 4px;
+      pointer-events: none;
     }
     
-    /* ARKA KAPAK - Sol tarafta, kapalı kitap */
+    /* ARKA KAPAK */
     .back-cover-spread {
       justify-content: flex-start;
     }
     
     .back-cover-page {
-      width: 700px;
-      height: 900px;
+      width: 50%;
+      height: 100%;
       background: #ffffff;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       position: relative;
-      border-radius: 15px 15px 15px 15px;
+      border-radius: 15px;
       transform-origin: right center;
       box-shadow: 
         10px 0 30px rgba(0,0,0,0.4),
-        20px 0 50px rgba(0,0,0,0.2),
-        inset -5px 0 10px rgba(255,255,255,0.1);
+        20px 0 50px rgba(0,0,0,0.2);
       border-right: 8px solid #e2e8f0;
     }
     
-    /* Loading placeholder - daha şık */
+    /* Loading placeholder */
     .loading-content {
       display: flex;
       align-items: center;
@@ -269,131 +277,41 @@
       max-width: 80%;
     }
     
-    /* Sayfa geçiş efektleri - sinematik */
-    .page-spread.fade-in {
-      animation: cinematicFade 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Sayfa çevirme animasyonu */
+    .page-turning {
+      animation: pageTurn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
-    @keyframes cinematicFade {
-      0% { 
-        opacity: 0; 
-        transform: translateZ(-100px) scale(0.8) rotateY(15deg); 
+    @keyframes pageTurn {
+      0% {
+        transform: translateZ(0) scale(1);
+      }
+      25% {
+        transform: translateZ(50px) scale(1.05) rotateY(10deg);
       }
       50% {
-        opacity: 0.5;
-        transform: translateZ(-20px) scale(0.95) rotateY(5deg);
+        transform: translateZ(100px) scale(1.1) rotateY(0deg);
+        opacity: 0.8;
       }
-      100% { 
-        opacity: 1; 
-        transform: translateZ(0) scale(1) rotateY(0deg); 
+      75% {
+        transform: translateZ(50px) scale(1.05) rotateY(-10deg);
       }
-    }
-    
-    /* Kitap genel hover efekti */
-    .book:hover {
-      transform: perspective(2500px) rotateX(2deg) rotateY(-8deg) scale(1.02);
-      transition: transform 0.8s ease;
-    }
-    
-    /* Kontroller - daha premium */
-    .controls {
-      display: flex;
-      gap: 25px;
-      align-items: center;
-      margin-top: 40px;
-      position: relative;
-      z-index: 100;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      border-radius: 50px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .control-btn {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      padding: 18px 35px;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    
-    .control-btn:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.25);
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .control-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    
-    .page-info {
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(20px);
-      padding: 15px 30px;
-      border-radius: 30px;
-      color: white;
-      font-size: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    
-    /* Responsive - daha iyi uyum */
-    @media (max-width: 1500px) {
-      .book {
-        width: 1100px;
-        height: 750px;
-      }
-      .page-left, .page-right, .cover-page, .back-cover-page {
-        width: 550px;
-        height: 750px;
+      100% {
+        transform: translateZ(0) scale(1);
       }
     }
     
-    @media (max-width: 1200px) {
-      .book {
-        width: 900px;
-        height: 600px;
-      }
-      .page-left, .page-right, .cover-page, .back-cover-page {
-        width: 450px;
-        height: 600px;
-      }
-      h1 {
-        font-size: 2em;
-      }
-    }
-    
-    @media (max-width: 950px) {
-      .book {
-        width: 700px;
-        height: 500px;
-      }
-      .page-left, .page-right, .cover-page, .back-cover-page {
-        width: 350px;
-        height: 500px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    
-    /* Yükleme animasyonu - premium */
+    /* Yükleme animasyonu */
     .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       color: white;
       text-align: center;
       font-size: 24px;
       font-weight: 300;
+      z-index: 1000;
     }
     
     .spinner {
@@ -402,16 +320,16 @@
       border: 6px solid rgba(255,255,255,0.2);
       border-top: 6px solid white;
       border-radius: 50%;
-      animation: premiumSpin 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+      animation: spin 1.5s linear infinite;
       margin: 0 auto 30px;
     }
     
-    @keyframes premiumSpin {
+    @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
     
-    /* Sayfa açılma ipucu */
+    /* Sayfa çevirme ipucu */
     .page-turn-hint {
       position: absolute;
       top: 50%;
@@ -425,6 +343,7 @@
       opacity: 0;
       transition: all 0.4s ease;
       animation: pulse 2s infinite;
+      pointer-events: none;
     }
     
     @keyframes pulse {
@@ -442,27 +361,37 @@
       opacity: 1;
       animation: none;
     }
+    
+    /* Responsive */
+    @media (max-width: 1500px) {
+      .book {
+        width: min(1100px, 90vw);
+        height: min(750px, 80vh);
+        margin-left: min(-550px, -45vw);
+        margin-top: min(-375px, -40vh);
+      }
+    }
+    
+    @media (max-width: 1200px) {
+      .book {
+        width: min(900px, 90vw);
+        height: min(600px, 80vh);
+        margin-left: min(-450px, -45vw);
+        margin-top: min(-300px, -40vh);
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>📚 OSSO KATALOG</h1>
-  
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <div>Premium katalog yükleniyor...</div>
+    <div>OSSO Katalog yükleniyor...</div>
   </div>
   
   <div class="book-container" id="book-container" style="display: none;">
     <div class="book" id="book">
       <!-- Sayfalar dinamik olarak yüklenecek -->
     </div>
-  </div>
-  
-  <div class="controls" id="controls" style="display: none;">
-    <button class="control-btn" id="prevBtn">⬅ Önceki</button>
-    <div class="page-info" id="pageInfo">Kapak</div>
-    <button class="control-btn" id="nextBtn">Sonraki ➡</button>
-    <button class="control-btn" id="homeBtn">🏠 Kapak</button>
   </div>
 
   <script>
@@ -482,7 +411,7 @@
           setTimeout(() => {
             this.hideLoading();
             this.showSpread(0);
-            console.log('OSSO Premium Flipbook hazır! 📖✨');
+            console.log('OSSO Flipbook hazır! 📖');
           }, 1000);
           
         } catch (error) {
@@ -494,19 +423,19 @@
       createAllSpreads() {
         const book = document.getElementById('book');
         
-        // 1. KAPAK (sağ tarafta tek sayfa)
+        // 1. KAPAK
         const coverSpread = this.createCoverSpread();
         book.appendChild(coverSpread);
         this.spreads.push(coverSpread);
         
-        // 2. NORMAL SAYFALAR (çift sayfa)
+        // 2. NORMAL SAYFALAR
         for (let i = 2; i <= 26; i += 2) {
           const normalSpread = this.createNormalSpread(i, i + 1);
           book.appendChild(normalSpread);
           this.spreads.push(normalSpread);
         }
         
-        // 3. ARKA KAPAK (sol tarafta tek sayfa)
+        // 3. ARKA KAPAK
         const backCoverSpread = this.createBackCoverSpread();
         book.appendChild(backCoverSpread);
         this.spreads.push(backCoverSpread);
@@ -515,22 +444,24 @@
       createCoverSpread() {
         const spread = document.createElement('div');
         spread.className = 'page-spread cover-spread hidden';
-        spread.dataset.spreadIndex = 0;
         
         spread.innerHTML = `
-          <div class="cover-page" onclick="flipbook.nextSpread()">
+          <div class="cover-page">
             <div class="loading-content">
               <div class="icon">📚</div>
               <div class="title">OSSO</div>
               <div class="subtitle">
                 Spor Tesisleri & İnşaat<br>
-                Premium Katalog<br><br>
+                Katalog<br><br>
                 Açmak için tıklayın
               </div>
             </div>
             <div class="page-turn-hint"></div>
           </div>
         `;
+        
+        // Kapak tıklama
+        spread.querySelector('.cover-page').onclick = () => this.nextSpread();
         
         this.loadPageImage(spread.querySelector('.cover-page'), 1);
         return spread;
@@ -545,17 +476,23 @@
             <div class="loading-content">
               <div class="icon">📄</div>
               <div class="title">Sayfa ${leftPage}</div>
-              <div class="subtitle">İçerik yükleniyor...</div>
+              <div class="subtitle">Yükleniyor...</div>
             </div>
           </div>
           <div class="page-right">
             <div class="loading-content">
               <div class="icon">📄</div>
               <div class="title">Sayfa ${rightPage}</div>
-              <div class="subtitle">İçerik yükleniyor...</div>
+              <div class="subtitle">Yükleniyor...</div>
             </div>
           </div>
         `;
+        
+        // Sol sayfa tıklama - önceki sayfa
+        spread.querySelector('.page-left').onclick = () => this.prevSpread();
+        
+        // Sağ sayfa tıklama - sonraki sayfa
+        spread.querySelector('.page-right').onclick = () => this.nextSpread();
         
         this.loadPageImage(spread.querySelector('.page-left'), leftPage);
         this.loadPageImage(spread.querySelector('.page-right'), rightPage);
@@ -595,8 +532,7 @@
           pageElement.innerHTML = '';
         };
         img.onerror = () => {
-          // Keep placeholder with better styling
-          console.log(`Sayfa ${pageNumber} resmi yüklenmedi, placeholder gösteriliyor`);
+          console.log(`Sayfa ${pageNumber} placeholder gösteriliyor`);
         };
         img.src = `images/${pageNumber}.jpg`;
       }
@@ -604,21 +540,27 @@
       showSpread(spreadIndex) {
         if (spreadIndex < 0 || spreadIndex >= this.spreads.length) return;
         
+        // Mevcut sayfa çevirme animasyonu
+        if (this.spreads[this.currentSpread]) {
+          this.spreads[this.currentSpread].classList.add('page-turning');
+          
+          setTimeout(() => {
+            this.spreads[this.currentSpread].classList.remove('page-turning');
+          }, 1000);
+        }
+        
+        // Tüm sayfaları gizle
         this.spreads.forEach(spread => {
           spread.classList.add('hidden');
           spread.classList.remove('visible');
         });
         
-        this.spreads[spreadIndex].classList.remove('hidden');
-        this.spreads[spreadIndex].classList.add('visible');
-        this.spreads[spreadIndex].classList.add('fade-in');
-        
+        // Yeni sayfayı göster
         setTimeout(() => {
-          this.spreads[spreadIndex].classList.remove('fade-in');
-        }, 1500);
-        
-        this.currentSpread = spreadIndex;
-        this.updateControls();
+          this.spreads[spreadIndex].classList.remove('hidden');
+          this.spreads[spreadIndex].classList.add('visible');
+          this.currentSpread = spreadIndex;
+        }, 200);
       }
       
       nextSpread() {
@@ -633,44 +575,18 @@
         }
       }
       
-      goHome() {
-        this.showSpread(0);
-      }
-      
-      updateControls() {
-        const pageInfo = document.getElementById('pageInfo');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        if (this.currentSpread === 0) {
-          pageInfo.textContent = '📚 Kapak';
-        } else if (this.currentSpread === this.spreads.length - 1) {
-          pageInfo.textContent = '📞 Arka Kapak';
-        } else {
-          const startPage = (this.currentSpread - 1) * 2 + 2;
-          const endPage = startPage + 1;
-          pageInfo.textContent = `📄 Sayfa ${startPage}-${endPage}`;
-        }
-        
-        prevBtn.disabled = this.currentSpread === 0;
-        nextBtn.disabled = this.currentSpread === this.spreads.length - 1;
-      }
-      
       setupControls() {
-        document.getElementById('prevBtn').onclick = () => this.prevSpread();
-        document.getElementById('nextBtn').onclick = () => this.nextSpread();
-        document.getElementById('homeBtn').onclick = () => this.goHome();
-        
+        // Klavye kontrolleri
         document.addEventListener('keydown', (e) => {
-          if (e.keyCode === 37) this.prevSpread();
-          if (e.keyCode === 39) this.nextSpread();
-          if (e.keyCode === 36) this.goHome();
-          if (e.keyCode === 32) {
+          if (e.keyCode === 37) this.prevSpread(); // Sol ok
+          if (e.keyCode === 39) this.nextSpread(); // Sağ ok
+          if (e.keyCode === 32) { // Space
             e.preventDefault();
             this.nextSpread();
           }
         });
         
+        // Touch kontrolleri
         let startX = 0;
         const book = document.getElementById('book');
         
@@ -695,7 +611,6 @@
       hideLoading() {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('book-container').style.display = 'block';
-        document.getElementById('controls').style.display = 'flex';
       }
       
       showError() {
@@ -711,11 +626,7 @@
     let flipbook;
     
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('Premium OSSO Flipbook başlatılıyor...');
-      
-      setTimeout(() => {
-        flipbook = new OSSORealFlipbook();
-      }, 200);
+      flipbook = new OSSORealFlipbook();
     });
   </script>
 </body>
