@@ -318,139 +318,62 @@
     
     @media (max-width: 900px) {
       .container { 
-        padding-top: 0;
         padding: 0;
-        justify-content: center;
+        justify-content: flex-start;
+        padding-top: 20px;
       }
       
       .mobile-instruction {
         display: block;
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        z-index: 1000;
       }
       
       .book { 
-        width: 90vw; 
-        height: 55vh;
-        min-height: 350px;
-        max-height: 500px;
-        transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
-      }
-      
-      .cover-side, .left-side, .right-side, .back-cover-side { 
-        width: calc(90vw / 2); 
-        height: 55vh;
-        min-height: 350px;
-        max-height: 500px;
-      }
-      
-      /* Mobilde 3D efektleri kaldır */
-      .left-side {
-        transform: perspective(800px) rotateY(-3deg) translateX(-10px) !important;
-        box-shadow: 3px 0 15px rgba(0,0,0,0.2);
-      }
-      
-      .right-side {
-        transform: perspective(800px) rotateY(3deg) translateX(10px) !important;
-        box-shadow: -3px 0 15px rgba(0,0,0,0.2);
-      }
-      
-      .cover-side {
-        transform: perspective(800px) rotateY(-5deg) !important;
-        box-shadow: -5px 0 20px rgba(0,0,0,0.2);
-      }
-      
-      .back-cover-side {
-        transform: perspective(800px) rotateY(0deg) !important;
-        box-shadow: 0 0 25px rgba(0,0,0,0.3);
-      }
-      
-      /* Mobilde hover efektlerini kaldır */
-      .left-side:hover, .right-side:hover, .cover-side:hover, .back-cover-side:hover {
-        transform: perspective(800px) rotateY(-3deg) translateX(-10px) !important;
-      }
-      
-      .right-side:hover {
-        transform: perspective(800px) rotateY(3deg) translateX(10px) !important;
-      }
-      
-      .cover-side:hover {
-        transform: perspective(800px) rotateY(-5deg) !important;
-      }
-      
-      .back-cover-side:hover {
-        transform: perspective(800px) rotateY(0deg) !important;
-      }
-      
-      /* Mobilde font boyutlarını küçült */
-      .content .icon {
-        font-size: 2.5em;
-        margin-bottom: 15px;
-      }
-      
-      .content .title {
-        font-size: 1.3em;
-        margin-bottom: 10px;
-      }
-      
-      .content .subtitle {
-        font-size: 0.9em;
-        line-height: 1.4;
-      }
-      
-      /* Cilt çizgisini mobilde küçült */
-      .normal::after {
-        width: 4px;
-        top: 10%;
-        height: 80%;
-      }
-    }
-    
-    @media (max-width: 600px) {
-      .container { 
-        padding: 0;
-        justify-content: center;
-      }
-      
-      .book { 
-        width: 95vw; 
-        height: 50vh;
-        min-height: 300px;
-        max-height: 400px;
+        width: 100vw; 
+        height: calc(100vh - 100px);
+        min-height: calc(100vh - 100px);
+        max-height: calc(100vh - 100px);
         transform: none;
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
-        width: calc(95vw / 2); 
-        height: 50vh;
-        min-height: 300px;
-        max-height: 400px;
+        width: 50vw; 
+        height: calc(100vh - 100px);
+        min-height: calc(100vh - 100px);
+        max-height: calc(100vh - 100px);
       }
       
-      /* Çok küçük ekranlarda 3D efektleri tamamen kaldır */
+      /* Mobilde 3D efektleri kaldır */
       .left-side, .right-side, .cover-side, .back-cover-side {
         transform: none !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+        border-radius: 0 !important;
       }
       
       .left-side:hover, .right-side:hover, .cover-side:hover, .back-cover-side:hover {
         transform: none !important;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.2) !important;
       }
       
-      /* Font boyutlarını daha da küçült */
+      /* Mobilde font boyutlarını ayarla */
       .content .icon {
-        font-size: 2em;
-        margin-bottom: 10px;
+        font-size: 3em;
+        margin-bottom: 15px;
       }
       
       .content .title {
-        font-size: 1.1em;
-        margin-bottom: 8px;
+        font-size: 1.8em;
+        margin-bottom: 10px;
       }
       
       .content .subtitle {
-        font-size: 0.8em;
-        line-height: 1.3;
-        padding: 0 10px;
+        font-size: 1.1em;
+        line-height: 1.4;
+        padding: 0 15px;
       }
       
       /* Cilt çizgisini gizle */
@@ -458,46 +381,104 @@
         display: none;
       }
       
+      /* Sayfalar arası çizgi */
+      .normal {
+        border: none;
+      }
+      
+      .normal .left-side {
+        border-right: 2px solid #e2e8f0;
+      }
+      
+      .normal .right-side {
+        border-left: 2px solid #e2e8f0;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .container { 
+        padding: 0;
+        justify-content: flex-start;
+        padding-top: 10px;
+      }
+      
+      .book { 
+        width: 100vw; 
+        height: calc(100vh - 80px);
+        min-height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+        transform: none;
+      }
+      
+      .cover-side, .left-side, .right-side, .back-cover-side { 
+        width: 50vw; 
+        height: calc(100vh - 80px);
+        min-height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+        border-radius: 0 !important;
+      }
+      
       .mobile-instruction {
+        bottom: 10px;
         font-size: 14px;
-        margin-top: 15px;
+      }
+      
+      /* Font boyutlarını ayarla */
+      .content .icon {
+        font-size: 2.5em;
+        margin-bottom: 12px;
+      }
+      
+      .content .title {
+        font-size: 1.5em;
+        margin-bottom: 8px;
+      }
+      
+      .content .subtitle {
+        font-size: 1em;
+        line-height: 1.3;
+        padding: 0 12px;
       }
     }
     
     @media (max-width: 400px) {
+      .container {
+        padding-top: 5px;
+      }
+      
       .book { 
-        width: 98vw;
-        height: 45vh;
-        min-height: 280px;
-        max-height: 350px;
+        width: 100vw;
+        height: calc(100vh - 70px);
+        min-height: calc(100vh - 70px);
+        max-height: calc(100vh - 70px);
       }
       
       .cover-side, .left-side, .right-side, .back-cover-side { 
-        width: calc(98vw / 2);
-        height: 45vh;
-        min-height: 280px;
-        max-height: 350px;
+        width: 50vw;
+        height: calc(100vh - 70px);
+        min-height: calc(100vh - 70px);
+        max-height: calc(100vh - 70px);
+      }
+      
+      .mobile-instruction {
+        bottom: 5px;
+        font-size: 12px;
       }
       
       .content .icon {
-        font-size: 1.8em;
-        margin-bottom: 8px;
+        font-size: 2em;
+        margin-bottom: 10px;
       }
       
       .content .title {
-        font-size: 1em;
+        font-size: 1.3em;
         margin-bottom: 6px;
       }
       
       .content .subtitle {
-        font-size: 0.75em;
+        font-size: 0.9em;
         line-height: 1.2;
-        padding: 0 8px;
-      }
-      
-      .mobile-instruction {
-        font-size: 12px;
-        margin-top: 10px;
+        padding: 0 10px;
       }
     }
   </style>
