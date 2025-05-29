@@ -59,157 +59,65 @@
       transform: scale(1);
     }
     
-    /* Gerçekçi sayfa kıvrılma efektleri */
-    .page-flip-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-    }
-    
-    .page-front, .page-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 15px;
-    }
-    
-    .page-back {
-      transform: rotateY(180deg);
-    }
-    
-    /* Hover kıvrılma efektleri */
-    .right-side:hover {
-      transform: perspective(1000px) rotateY(8deg) translateX(20px) rotateX(-2deg) !important;
-      box-shadow: -8px 5px 35px rgba(0,0,0,0.4), inset -3px 0 10px rgba(0,0,0,0.1);
-    }
-    
-    .cover-side:hover {
-      transform: perspective(1000px) rotateY(-20deg) translateX(-20px) rotateX(-2deg) !important;
-      box-shadow: -15px 5px 40px rgba(0,0,0,0.4), inset 3px 0 15px rgba(0,0,0,0.1);
-    }
-    
-    .left-side:hover {
-      transform: perspective(1000px) rotateY(-15deg) translateX(-40px) rotateX(-2deg) !important;
-      box-shadow: 8px 5px 35px rgba(0,0,0,0.4), inset 3px 0 10px rgba(0,0,0,0.1);
-    }
-    
-    /* Sayfa çevirme animasyonları */
+    /* Basit ama gerçekçi sayfa çevirme */
     .page.page-turning-next {
-      animation: realisticTurnNext 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      animation: simpleTurnNext 0.6s ease-out forwards;
     }
     
     .page.page-turning-prev {
-      animation: realisticTurnPrev 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      animation: simpleTurnPrev 0.6s ease-out forwards;
     }
     
-    @keyframes realisticTurnNext {
+    @keyframes simpleTurnNext {
       0% {
-        transform: scale(1) rotateY(0deg) rotateX(0deg);
+        transform: scale(1);
         opacity: 1;
-        z-index: 10;
-      }
-      25% {
-        transform: scale(1.02) rotateY(-30deg) rotateX(-5deg) translateZ(50px);
-        opacity: 0.9;
-      }
-      50% {
-        transform: scale(0.98) rotateY(-90deg) rotateX(-8deg) translateZ(30px);
-        opacity: 0.5;
-      }
-      75% {
-        transform: scale(0.95) rotateY(-150deg) rotateX(-5deg) translateZ(20px);
-        opacity: 0.2;
       }
       100% {
-        transform: scale(0.92) rotateY(-180deg) rotateX(0deg) translateZ(0px);
+        transform: scale(0.95) translateX(30px);
         opacity: 0;
-        z-index: 1;
       }
     }
     
-    @keyframes realisticTurnPrev {
+    @keyframes simpleTurnPrev {
       0% {
-        transform: scale(1) rotateY(0deg) rotateX(0deg);
+        transform: scale(1);
         opacity: 1;
-        z-index: 10;
-      }
-      25% {
-        transform: scale(1.02) rotateY(30deg) rotateX(-5deg) translateZ(50px);
-        opacity: 0.9;
-      }
-      50% {
-        transform: scale(0.98) rotateY(90deg) rotateX(-8deg) translateZ(30px);
-        opacity: 0.5;
-      }
-      75% {
-        transform: scale(0.95) rotateY(150deg) rotateX(-5deg) translateZ(20px);
-        opacity: 0.2;
       }
       100% {
-        transform: scale(0.92) rotateY(180deg) rotateX(0deg) translateZ(0px);
+        transform: scale(0.95) translateX(-30px);
         opacity: 0;
-        z-index: 1;
       }
     }
     
     /* Gelen sayfa animasyonu */
     .page.page-entering-next {
-      animation: realisticEnterNext 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      animation: simpleEnterNext 0.6s ease-out forwards;
     }
     
     .page.page-entering-prev {
-      animation: realisticEnterPrev 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      animation: simpleEnterPrev 0.6s ease-out forwards;
     }
     
-    @keyframes realisticEnterNext {
+    @keyframes simpleEnterNext {
       0% {
-        transform: scale(0.92) rotateY(180deg) rotateX(0deg) translateZ(0px);
+        transform: scale(0.95) translateX(-30px);
         opacity: 0;
-        z-index: 1;
-      }
-      25% {
-        transform: scale(0.95) rotateY(150deg) rotateX(5deg) translateZ(20px);
-        opacity: 0.2;
-      }
-      50% {
-        transform: scale(0.98) rotateY(90deg) rotateX(8deg) translateZ(30px);
-        opacity: 0.5;
-      }
-      75% {
-        transform: scale(1.02) rotateY(30deg) rotateX(5deg) translateZ(50px);
-        opacity: 0.9;
       }
       100% {
-        transform: scale(1) rotateY(0deg) rotateX(0deg) translateZ(0px);
+        transform: scale(1) translateX(0px);
         opacity: 1;
-        z-index: 10;
       }
     }
     
-    @keyframes realisticEnterPrev {
+    @keyframes simpleEnterPrev {
       0% {
-        transform: scale(0.92) rotateY(-180deg) rotateX(0deg) translateZ(0px);
+        transform: scale(0.95) translateX(30px);
         opacity: 0;
-        z-index: 1;
-      }
-      25% {
-        transform: scale(0.95) rotateY(-150deg) rotateX(5deg) translateZ(20px);
-        opacity: 0.2;
-      }
-      50% {
-        transform: scale(0.98) rotateY(-90deg) rotateX(8deg) translateZ(30px);
-        opacity: 0.5;
-      }
-      75% {
-        transform: scale(1.02) rotateY(-30deg) rotateX(5deg) translateZ(50px);
-        opacity: 0.9;
       }
       100% {
-        transform: scale(1) rotateY(0deg) rotateX(0deg) translateZ(0px);
+        transform: scale(1) translateX(0px);
         opacity: 1;
-        z-index: 10;
       }
     }
     
@@ -559,7 +467,7 @@
             currentActivePage.classList.remove('page-turning-next', 'page-turning-prev');
             newPage.classList.remove('page-entering-next', 'page-entering-prev');
             this.isAnimating = false;
-          }, 800);
+          }, 1200);
         } else {
           // İlk gösterimde animasyon yok
           this.pages.forEach(page => {
