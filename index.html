@@ -12,39 +12,57 @@
     }
     
     body {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
       font-family: 'Arial', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px;
+      overflow: hidden;
     }
     
     h1 {
       color: white;
       font-size: 2.5em;
-      margin-bottom: 30px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      margin-bottom: 25px;
+      text-shadow: 3px 3px 15px rgba(0,0,0,0.7);
       text-align: center;
+      font-weight: 300;
+      letter-spacing: 2px;
     }
     
     .book-container {
-      perspective: 1500px;
+      perspective: 2500px;
       position: relative;
+      transform-style: preserve-3d;
     }
     
     .book {
       position: relative;
-      width: 800px;
-      height: 600px;
+      width: 1400px;  /* Çok büyük tam ekran */
+      height: 900px;  /* Dikey dikdörtgen oran */
       transform-style: preserve-3d;
       margin: 0 auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      border-radius: 8px;
-      overflow: hidden;
-      background: #f8f9fa;
+      border-radius: 15px;
+      overflow: visible;
+      background: transparent;
+      transform: perspective(2500px) rotateX(5deg) rotateY(-5deg);
+    }
+    
+    /* Kitap gölgesi ve masa efekti */
+    .book::before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: -20%;
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      transform: rotateX(90deg) translateZ(-30px);
     }
     
     /* Sayfa Spread Sistemi */
@@ -53,279 +71,385 @@
       width: 100%;
       height: 100%;
       display: flex;
-      background: white;
-      transition: opacity 0.8s ease;
-      border-radius: 8px;
-      overflow: hidden;
+      background: transparent;
+      transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border-radius: 15px;
+      overflow: visible;
+      transform-style: preserve-3d;
     }
     
     .page-spread.hidden {
       opacity: 0;
       pointer-events: none;
+      transform: translateZ(-50px) scale(0.9);
     }
     
-    /* KAPAK - Tek sayfa dik format */
+    .page-spread.visible {
+      opacity: 1;
+      transform: translateZ(0) scale(1);
+    }
+    
+    /* KAPAK - Sağ tarafta, gerçek kitap gibi */
     .cover-spread {
-      justify-content: center;
-      align-items: center;
+      justify-content: flex-end;
     }
     
     .cover-page {
-      width: 100%;
-      height: 100%;
+      width: 700px;
+      height: 900px;
+      background: #ffffff;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       position: relative;
       cursor: pointer;
-      transition: transform 0.3s ease;
-      border-radius: 8px;
-      overflow: hidden;
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border-radius: 15px 15px 15px 15px;
+      transform-origin: left center;
+      box-shadow: 
+        -10px 0 30px rgba(0,0,0,0.4),
+        -20px 0 50px rgba(0,0,0,0.2),
+        inset 5px 0 10px rgba(255,255,255,0.1);
+      border-left: 8px solid #e2e8f0;
     }
     
     .cover-page:hover {
-      transform: scale(1.01);
+      transform: perspective(1500px) rotateY(-25deg) translateX(-30px);
+      box-shadow: 
+        -15px 0 40px rgba(0,0,0,0.5),
+        -30px 0 80px rgba(0,0,0,0.3),
+        inset 5px 0 15px rgba(255,255,255,0.2);
     }
     
-    /* ARKA KAPAK - Tek sayfa dik format */
-    .back-cover-spread {
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .back-cover-page {
-      width: 100%;
+    /* Kapak üzerinde sayfa açılma efekti */
+    .cover-page::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 60px;
       height: 100%;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-response;
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0.8) 0%, 
+        rgba(255,255,255,0.4) 50%, 
+        transparent 100%);
+      opacity: 0;
+      transition: all 0.5s ease;
+      border-radius: 15px 0 0 15px;
     }
     
-    /* NORMAL SAYFALAR - Çift sayfa kitap ciltli format */
+    .cover-page:hover::after {
+      opacity: 1;
+      transform: translateX(10px);
+    }
+    
+    /* NORMAL SAYFALAR - Gerçek kitap açık hali */
     .normal-spread {
       position: relative;
+      background: transparent;
     }
     
     .page-left, .page-right {
-      width: 400px;
-      height: 600px;
+      width: 700px;
+      height: 900px;
       position: relative;
-      background: white;
+      background: #ffffff;
       overflow: hidden;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      border-radius: 15px;
     }
     
-    /* Cilt çizgisi ortada */
+    /* Sol sayfa - sola doğru açık */
+    .page-left {
+      transform-origin: right center;
+      transform: perspective(1500px) rotateY(-8deg) translateX(-20px);
+      box-shadow: 
+        5px 0 25px rgba(0,0,0,0.3),
+        10px 0 50px rgba(0,0,0,0.1);
+      border-right: 3px solid #f1f5f9;
+    }
+    
+    /* Sağ sayfa - sağa doğru açık */
+    .page-right {
+      transform-origin: left center;
+      transform: perspective(1500px) rotateY(8deg) translateX(20px);
+      box-shadow: 
+        -5px 0 25px rgba(0,0,0,0.3),
+        -10px 0 50px rgba(0,0,0,0.1);
+      border-left: 3px solid #f1f5f9;
+    }
+    
+    /* Cilt çizgisi ortada - daha gerçekçi */
     .normal-spread::after {
       content: '';
       position: absolute;
       left: 50%;
-      top: 0;
-      width: 4px;
-      height: 100%;
+      top: 5%;
+      width: 8px;
+      height: 90%;
       background: linear-gradient(to bottom, 
-        #ddd 0%, 
-        #999 10%, 
-        #666 50%, 
-        #999 90%, 
-        #ddd 100%);
+        #64748b 0%, 
+        #334155 20%, 
+        #1e293b 50%, 
+        #334155 80%, 
+        #64748b 100%);
       transform: translateX(-50%);
       z-index: 10;
       box-shadow: 
-        -2px 0 5px rgba(0,0,0,0.2),
-        2px 0 5px rgba(0,0,0,0.2);
+        -4px 0 12px rgba(0,0,0,0.4),
+        4px 0 12px rgba(0,0,0,0.4);
+      border-radius: 4px;
     }
     
-    /* Sol sayfa - hafif sağa doğru perspektif */
-    .page-left {
+    /* ARKA KAPAK - Sol tarafta, kapalı kitap */
+    .back-cover-spread {
+      justify-content: flex-start;
+    }
+    
+    .back-cover-page {
+      width: 700px;
+      height: 900px;
+      background: #ffffff;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      border-radius: 15px 15px 15px 15px;
       transform-origin: right center;
-      transform: perspective(1000px) rotateY(-1deg);
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      box-shadow: 
+        10px 0 30px rgba(0,0,0,0.4),
+        20px 0 50px rgba(0,0,0,0.2),
+        inset -5px 0 10px rgba(255,255,255,0.1);
+      border-right: 8px solid #e2e8f0;
     }
     
-    /* Sağ sayfa - hafif sola doğru perspektif */
-    .page-right {
-      transform-origin: left center;
-      transform: perspective(1000px) rotateY(1deg);
-      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-    }
-    
-    /* Loading placeholder */
+    /* Loading placeholder - daha şık */
     .loading-content {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100%;
       flex-direction: column;
-      color: #666;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      color: #475569;
+      background: linear-gradient(135deg, 
+        #f8fafc 0%, 
+        #f1f5f9 50%, 
+        #e2e8f0 100%);
       text-align: center;
       position: relative;
+      border-radius: 15px;
     }
     
     .loading-content .icon {
-      font-size: 4em;
-      margin-bottom: 20px;
-      opacity: 0.6;
-      animation: pulse 2s infinite;
+      font-size: 6em;
+      margin-bottom: 30px;
+      opacity: 0.7;
+      animation: float 3s ease-in-out infinite;
     }
     
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
     }
     
     .loading-content .title {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1e293b;
+      letter-spacing: 1px;
     }
     
     .loading-content .subtitle {
-      font-size: 0.9em;
-      opacity: 0.7;
+      font-size: 1.3em;
+      opacity: 0.8;
+      line-height: 1.6;
+      max-width: 80%;
     }
     
-    /* Sayfa geçiş efektleri */
+    /* Sayfa geçiş efektleri - sinematik */
     .page-spread.fade-in {
-      animation: fadeIn 0.8s ease;
+      animation: cinematicFade 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+    @keyframes cinematicFade {
+      0% { 
+        opacity: 0; 
+        transform: translateZ(-100px) scale(0.8) rotateY(15deg); 
+      }
+      50% {
+        opacity: 0.5;
+        transform: translateZ(-20px) scale(0.95) rotateY(5deg);
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateZ(0) scale(1) rotateY(0deg); 
+      }
     }
     
-    /* Kitap hover efekti */
+    /* Kitap genel hover efekti */
     .book:hover {
-      transform: rotateY(-2deg) rotateX(1deg);
-      transition: transform 0.5s ease;
+      transform: perspective(2500px) rotateX(2deg) rotateY(-8deg) scale(1.02);
+      transition: transform 0.8s ease;
     }
     
-    /* Kontroller */
+    /* Kontroller - daha premium */
     .controls {
       display: flex;
-      gap: 15px;
+      gap: 25px;
       align-items: center;
-      margin-top: 30px;
+      margin-top: 40px;
       position: relative;
       z-index: 100;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .control-btn {
       background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
       color: white;
       border: 2px solid rgba(255, 255, 255, 0.3);
-      padding: 12px 24px;
-      border-radius: 30px;
+      padding: 18px 35px;
+      border-radius: 40px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 16px;
-      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
     
     .control-btn:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.25);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-color: rgba(255, 255, 255, 0.5);
     }
     
     .control-btn:disabled {
-      opacity: 0.4;
+      opacity: 0.3;
       cursor: not-allowed;
     }
     
     .page-info {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 8px 16px;
-      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      padding: 15px 30px;
+      border-radius: 30px;
       color: white;
-      font-size: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      font-weight: 500;
+      font-size: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
     
-    /* Responsive */
-    @media (max-width: 900px) {
+    /* Responsive - daha iyi uyum */
+    @media (max-width: 1500px) {
       .book {
-        width: 600px;
-        height: 450px;
+        width: 1100px;
+        height: 750px;
       }
-      .page-left, .page-right {
-        width: 300px;
-        height: 450px;
+      .page-left, .page-right, .cover-page, .back-cover-page {
+        width: 550px;
+        height: 750px;
       }
     }
     
-    @media (max-width: 650px) {
+    @media (max-width: 1200px) {
       .book {
-        width: 400px;
-        height: 300px;
+        width: 900px;
+        height: 600px;
       }
-      .page-left, .page-right {
-        width: 200px;
-        height: 300px;
+      .page-left, .page-right, .cover-page, .back-cover-page {
+        width: 450px;
+        height: 600px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+    }
+    
+    @media (max-width: 950px) {
+      .book {
+        width: 700px;
+        height: 500px;
+      }
+      .page-left, .page-right, .cover-page, .back-cover-page {
+        width: 350px;
+        height: 500px;
       }
       h1 {
         font-size: 1.8em;
       }
     }
     
-    /* Yükleme animasyonu */
+    /* Yükleme animasyonu - premium */
     .loading {
       color: white;
       text-align: center;
-      font-size: 20px;
+      font-size: 24px;
+      font-weight: 300;
     }
     
     .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid white;
+      width: 70px;
+      height: 70px;
+      border: 6px solid rgba(255,255,255,0.2);
+      border-top: 6px solid white;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: premiumSpin 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
       margin: 0 auto 30px;
     }
     
-    @keyframes spin {
+    @keyframes premiumSpin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
     
-    /* Sayfa açılma efekti */
+    /* Sayfa açılma ipucu */
     .page-turn-hint {
       position: absolute;
       top: 50%;
-      right: 20px;
+      left: 30px;
       transform: translateY(-50%);
       width: 0;
       height: 0;
-      border-left: 15px solid rgba(255,255,255,0.8);
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
+      border-right: 25px solid rgba(255,255,255,0.9);
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: all 0.4s ease;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 0;
+      }
+      50% {
+        transform: translateY(-50%) scale(1.1);
+        opacity: 0.8;
+      }
     }
     
     .cover-page:hover .page-turn-hint {
       opacity: 1;
+      animation: none;
     }
   </style>
 </head>
 <body>
-  <h1>📚 OSSO Katalog</h1>
+  <h1>📚 OSSO KATALOG</h1>
   
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <div>Katalog hazırlanıyor...</div>
+    <div>Premium katalog yükleniyor...</div>
   </div>
   
   <div class="book-container" id="book-container" style="display: none;">
@@ -346,7 +470,7 @@
       constructor() {
         this.currentSpread = 0;
         this.spreads = [];
-        this.totalSpreads = 14; // 28 sayfa için 14 spread
+        this.totalSpreads = 14;
         this.init();
       }
       
@@ -355,12 +479,11 @@
           this.createAllSpreads();
           this.setupControls();
           
-          // Yükleme ekranını hemen gizle
           setTimeout(() => {
             this.hideLoading();
             this.showSpread(0);
-            console.log('OSSO Flipbook hazır! 📖');
-          }, 800);
+            console.log('OSSO Premium Flipbook hazır! 📖✨');
+          }, 1000);
           
         } catch (error) {
           console.error('Flipbook hatası:', error);
@@ -371,19 +494,19 @@
       createAllSpreads() {
         const book = document.getElementById('book');
         
-        // 1. KAPAK (tek sayfa - sayfa 1)
+        // 1. KAPAK (sağ tarafta tek sayfa)
         const coverSpread = this.createCoverSpread();
         book.appendChild(coverSpread);
         this.spreads.push(coverSpread);
         
-        // 2. NORMAL SAYFALAR (çift sayfa - 2-3, 4-5, ..., 26-27)
+        // 2. NORMAL SAYFALAR (çift sayfa)
         for (let i = 2; i <= 26; i += 2) {
           const normalSpread = this.createNormalSpread(i, i + 1);
           book.appendChild(normalSpread);
           this.spreads.push(normalSpread);
         }
         
-        // 3. ARKA KAPAK (tek sayfa - sayfa 28)
+        // 3. ARKA KAPAK (sol tarafta tek sayfa)
         const backCoverSpread = this.createBackCoverSpread();
         book.appendChild(backCoverSpread);
         this.spreads.push(backCoverSpread);
@@ -398,8 +521,12 @@
           <div class="cover-page" onclick="flipbook.nextSpread()">
             <div class="loading-content">
               <div class="icon">📚</div>
-              <div class="title">OSSO KATALOG</div>
-              <div class="subtitle">Spor Tesisleri & İnşaat</div>
+              <div class="title">OSSO</div>
+              <div class="subtitle">
+                Spor Tesisleri & İnşaat<br>
+                Premium Katalog<br><br>
+                Açmak için tıklayın
+              </div>
             </div>
             <div class="page-turn-hint"></div>
           </div>
@@ -418,14 +545,14 @@
             <div class="loading-content">
               <div class="icon">📄</div>
               <div class="title">Sayfa ${leftPage}</div>
-              <div class="subtitle">Yükleniyor...</div>
+              <div class="subtitle">İçerik yükleniyor...</div>
             </div>
           </div>
           <div class="page-right">
             <div class="loading-content">
               <div class="icon">📄</div>
               <div class="title">Sayfa ${rightPage}</div>
-              <div class="subtitle">Yükleniyor...</div>
+              <div class="subtitle">İçerik yükleniyor...</div>
             </div>
           </div>
         `;
@@ -448,7 +575,8 @@
               <div class="subtitle">
                 info@ossoinsaat.com<br>
                 0555 594 35 13<br><br>
-                İkitelli Osb Mah. Süleyman Demirel Blv.<br>
+                İkitelli Osb Mah.<br>
+                Süleyman Demirel Blv.<br>
                 İstmall AVM, K:7, No:298<br>
                 Başakşehir/İstanbul
               </div>
@@ -464,39 +592,11 @@
         const img = new Image();
         img.onload = () => {
           pageElement.style.backgroundImage = `url('images/${pageNumber}.jpg')`;
-          pageElement.innerHTML = ''; // Loading content'i temizle
+          pageElement.innerHTML = '';
         };
         img.onerror = () => {
-          // Resim yoksa placeholder'ı güncelle
-          const content = pageElement.querySelector('.loading-content');
-          if (content) {
-            if (pageNumber === 1) {
-              content.innerHTML = `
-                <div class="icon">📚</div>
-                <div class="title">OSSO KATALOG</div>
-                <div class="subtitle">Kapak resmi bulunamadı<br><small>images/1.jpg</small></div>
-              `;
-            } else if (pageNumber === 28) {
-              content.innerHTML = `
-                <div class="icon">📞</div>
-                <div class="title">İLETİŞİM</div>
-                <div class="subtitle">
-                  info@ossoinsaat.com<br>
-                  0555 594 35 13<br><br>
-                  İkitelli Osb Mah. Süleyman Demirel Blv.<br>
-                  İstmall AVM, K:7, No:298<br>
-                  Başakşehir/İstanbul<br><br>
-                  <small>Arka kapak resmi: images/28.jpg</small>
-                </div>
-              `;
-            } else {
-              content.innerHTML = `
-                <div class="icon">🖼️</div>
-                <div class="title">Sayfa ${pageNumber}</div>
-                <div class="subtitle">Resim bulunamadı<br><small>images/${pageNumber}.jpg</small></div>
-              `;
-            }
-          }
+          // Keep placeholder with better styling
+          console.log(`Sayfa ${pageNumber} resmi yüklenmedi, placeholder gösteriliyor`);
         };
         img.src = `images/${pageNumber}.jpg`;
       }
@@ -504,19 +604,18 @@
       showSpread(spreadIndex) {
         if (spreadIndex < 0 || spreadIndex >= this.spreads.length) return;
         
-        // Tüm spread'leri gizle
         this.spreads.forEach(spread => {
           spread.classList.add('hidden');
+          spread.classList.remove('visible');
         });
         
-        // Seçilen spread'i göster
         this.spreads[spreadIndex].classList.remove('hidden');
+        this.spreads[spreadIndex].classList.add('visible');
         this.spreads[spreadIndex].classList.add('fade-in');
         
-        // Animasyon sonrası class'ı temizle
         setTimeout(() => {
           this.spreads[spreadIndex].classList.remove('fade-in');
-        }, 800);
+        }, 1500);
         
         this.currentSpread = spreadIndex;
         this.updateControls();
@@ -562,18 +661,16 @@
         document.getElementById('nextBtn').onclick = () => this.nextSpread();
         document.getElementById('homeBtn').onclick = () => this.goHome();
         
-        // Klavye kontrolleri
         document.addEventListener('keydown', (e) => {
-          if (e.keyCode === 37) this.prevSpread(); // Sol ok
-          if (e.keyCode === 39) this.nextSpread(); // Sağ ok
-          if (e.keyCode === 36) this.goHome(); // Home tuşu
-          if (e.keyCode === 32) { // Space tuşu
+          if (e.keyCode === 37) this.prevSpread();
+          if (e.keyCode === 39) this.nextSpread();
+          if (e.keyCode === 36) this.goHome();
+          if (e.keyCode === 32) {
             e.preventDefault();
             this.nextSpread();
           }
         });
         
-        // Touch kontrolleri
         let startX = 0;
         const book = document.getElementById('book');
         
@@ -604,24 +701,21 @@
       showError() {
         document.getElementById('loading').innerHTML = `
           <div>❌ Katalog yüklenemedi</div>
-          <div style="font-size: 16px; margin-top: 15px;">
+          <div style="font-size: 18px; margin-top: 15px;">
             Lütfen sayfayı yenileyin
           </div>
         `;
       }
     }
     
-    // Global erişim için
     let flipbook;
     
-    // Flipbook'u başlat
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM yüklendi, flipbook başlatılıyor...');
+      console.log('Premium OSSO Flipbook başlatılıyor...');
       
       setTimeout(() => {
-        console.log('Flipbook sınıfı oluşturuluyor...');
         flipbook = new OSSORealFlipbook();
-      }, 100);
+      }, 200);
     });
   </script>
 </body>
